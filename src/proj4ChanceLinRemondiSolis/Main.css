@@ -1,0 +1,33 @@
+/*
+ * File: Main.css
+ * Names: Graham Chance, Jenny Lin, Ana Sofia Solis Canales, Mike Remondi
+ * Class: CS361
+ * Project: 4
+ * Due Date: October 11, 2016
+ */
+
+.staffLine {
+    -fx-stroke: gray;
+}
+
+.note {
+  -fx-fill: gray;
+  -fx-opacity: 0.5;
+  -fx-stroke: black;
+  -fx-stroke-type: INSIDE;
+}
+
+#fxCompositionSheet {
+    -fx-pref-height: 1280.0;
+    -fx-pref-width: 2000.0;
+}
+
+#fxTempoLine {
+  -fx-stroke: red;
+}
+
+#instrumentPane {
+    -fx-pref-height: 1280.0;
+    -fx-pref-width: 124.0;
+}
+
