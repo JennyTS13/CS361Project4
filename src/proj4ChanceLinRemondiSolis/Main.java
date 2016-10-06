@@ -24,12 +24,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- *  Creates a JavaFX window for the user to compose a musical piece to play
- *  Controller for events in application
- *  @author Graham Chance
- *  @author Jenny Lin
- *  @author Ana Sofia Solis Canales
- *  @author Mike Remondi
+ * Creates a JavaFX window for the user to compose a musical piece to play
+ * Controller for events in application
+ *
+ * @author Graham Chance
+ * @author Jenny Lin
+ * @author Ana Sofia Solis Canales
+ * @author Mike Remondi
  */
 public class Main extends Application {
 
@@ -60,24 +61,27 @@ public class Main extends Application {
      * Changes the instrument that the future notes will be played with
      */
     @FXML
-    public void handleInstrumentChange(){
-        this.compositionSheet.changeInstrument(((RadioButton)instrumentGroup.getSelectedToggle()).getTextFill());
+    public void handleInstrumentChange() {
+        this.compositionSheet.changeInstrument(((RadioButton) instrumentGroup.getSelectedToggle()).getTextFill());
     }
 
     /**
      * Adds a note to the composition panel
      *
      * @param mouseEvent this is the mouseEvent that is mapped
-     * to this functionality (e.g. left click event)
+     *                   to this functionality (e.g. left click event)
      */
     @FXML
     protected void handleCompositionClick(MouseEvent mouseEvent) {
-        if (this.tempoLine.isVisible()){
+        if (this.tempoLine.isVisible()) {
             this.handleStopMusic();
-        }
-        else {
+        } else {
+            if (!mouseEvent.isControlDown()) {
+                this.compositionSheet.clearSelectedNotes();
+            }
             this.compositionSheet.addNoteToComposition(
-                    mouseEvent.getX(), mouseEvent.getY());
+                    mouseEvent.getX(),
+                    mouseEvent.getY());
         }
     }
 
@@ -94,7 +98,6 @@ public class Main extends Application {
     /**
      * Stops the midi player, the animation, and hides the tempo bar
      * This code/docstring is "borrowed" by Alex Rinker from his group's proj 2
-     *
      */
     @FXML
     protected void handleStopMusic() {
@@ -113,6 +116,7 @@ public class Main extends Application {
     protected void handleExit(ActionEvent event) {
         System.exit(0);
     }
+
     /**
      * Creates a dialog box prompting the user for the starting note
      * for use in the midi player.
@@ -120,7 +124,7 @@ public class Main extends Application {
      * This code/docstring is "borrowed" by Alex Rinker from his group's proj 2
      *
      * @param event the event which should trigger the dialog box and
-     * midiplayer combo functionality.
+     *              midiplayer combo functionality.
      */
     @FXML
     protected void handlePlayMidi(ActionEvent event) {
@@ -142,11 +146,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         BorderPane root = null;
 
-        try{
-            FXMLLoader fxmlLoader = new  FXMLLoader( getClass().getResource("Main.fxml") );
-            fxmlLoader.setController( this );      // set Composition as the controller
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Main.fxml"));
+            fxmlLoader.setController(this);      // set Composition as the controller
             root = fxmlLoader.load();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
         }

@@ -18,25 +18,27 @@ import javafx.scene.shape.Rectangle;
 
 import javax.sound.midi.ShortMessage;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Hashtable;
 
 /**
- *  This class creates a composition (music sheet and notes).
- *  @author Graham Chance
- *  @author Jenny Lin
- *  @author Ana Sofia Solis Canales
- *  @author Mike Remondi
+ * This class models a compostion sheet with notes.
+ *
+ * @author Graham Chance
+ * @author Jenny Lin
+ * @author Ana Sofia Solis Canales
+ * @author Mike Remondi
  */
 public class CompositionSheet {
     private Pane composition;
-    private ArrayList<Rectangle> notes;
-    private ArrayList<Rectangle> selectedNotes;
+    private ArrayList<MusicalNote> notes;
+    private ArrayList<MusicalNote> selectedNotes;
     private Paint instrumentColor;
     private Hashtable<Paint, Integer> channelMapping;
 
     /**
-     * Constructor. Takes in a pane node
+     * Constructor
+     *
+     * @param composition Where the rest of the composition sheet lives
      */
     public CompositionSheet(Pane composition) {
         this.composition = composition;
@@ -48,7 +50,10 @@ public class CompositionSheet {
         createCompositionSheet();
     }
 
-    public void setChannelMapping(){
+    /**
+     * Maps channel numbers to specific colors
+     */
+    public void setChannelMapping() {
         this.channelMapping.put(Color.GRAY, 0);
         this.channelMapping.put(Color.GREEN, 1);
         this.channelMapping.put(Color.BLUE, 2);
@@ -59,22 +64,25 @@ public class CompositionSheet {
         this.channelMapping.put(Color.BROWN, 7);
 
     }
+
     /**
      * Updates the current instrument color
+     *
      * @param newInstrumentColor
      */
-    public void changeInstrument(Paint newInstrumentColor){
+    public void changeInstrument(Paint newInstrumentColor) {
         this.instrumentColor = newInstrumentColor;
     }
 
     /**
      *
-     * @param instrumentColor
-     * @return
+     * @param instrumentColor Text color of the instrument
+     * @return Channel number which corresponds to the insturment color
      */
-    public int getChannelNumber(Paint instrumentColor){
+    public int getChannelNumber(Paint instrumentColor) {
         return this.channelMapping.get(instrumentColor);
     }
+
     /**
      * Generates the Composition nodes by creating a scrollPane
      * which holds a regular pane object (serves as the canvas)
@@ -82,9 +90,9 @@ public class CompositionSheet {
      */
     public void createCompositionSheet() {
         Line staffLine;
-        for(int i=0; i<127; i++) {
-            staffLine = new Line(0,i*10,2000,i*10);
-            staffLine.getStyleClass().add( "staffLine" );
+        for (int i = 0; i < 127; i++) {
+            staffLine = new Line(0, i * 10, 2000, i * 10);
+            staffLine.getStyleClass().add("staffLine");
             this.composition.getChildren().add(staffLine);
         }
     }
@@ -97,24 +105,36 @@ public class CompositionSheet {
      *
      * @param xPos the input x position of the note
      * @param yPos the input y position of the note
-     *        (will be adjusted to look nice)
      */
     public void addNoteToComposition(double xPos, double yPos) {
-        if (yPos > 0 && yPos < 1270) {
-            Rectangle note = new Rectangle(100.0, 10.0);
-            note.getStyleClass().add("note");
-            note.setX(xPos); note.setY(yPos - (yPos % 10));
-            note.setFill(this.instrumentColor);
-            this.composition.getChildren().add(note);
+        if (yPos >= 0 && yPos < 1280) {
+            Rectangle noteBox = new Rectangle(100.0, 10.0);
+            noteBox.getStyleClass().add("note");
+            noteBox.setX(xPos);
+            noteBox.setY(yPos - (yPos % 10));
+            noteBox.setFill(this.instrumentColor);
+            this.composition.getChildren().add(noteBox);
+
+            MusicalNote note = new MusicalNote(noteBox, getChannelNumber(noteBox.getFill()));
             this.notes.add(note);
+            this.selectedNotes.add(note);
         }
     }
 
     /**
      *
+     */
+    public void clearSelectedNotes(){
+        for(MusicalNote note : this.selectedNotes){
+            note.setSelected(false);
+        }
+        this.selectedNotes.clear();
+    }
+
+    /**
      * @param midiPlayer
      */
-    private void addProgramChanges (MidiPlayer midiPlayer){
+    private void addProgramChanges(MidiPlayer midiPlayer) {
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 0, 0, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 1, 6, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 2, 12, 0, 0, 0);
@@ -129,28 +149,27 @@ public class CompositionSheet {
      * Creates a composition using all of the rectangles in our
      * compositionSheet, based on their X and Y positions
      * (timing and pitch respectively)
-     *
+     * <p>
      * Also Keeps track of the last note and when it ends
      * and returns it for use in the animation
      */
-     public double buildSong( MidiPlayer midiPlayer) {
-         addProgramChanges(midiPlayer);
-         double stopTime = 0.0;
-         for (Rectangle note : this.notes) {
-             midiPlayer.addNote(
-                 //pitch
-                 (int) (127.0 -(note.getY() - (note.getY()%10))/10),
-                 100,                                    //volume
-                 (int) note.getX(),                     //startTick
-                 (int) note.getWidth(),                //duration
-                 getChannelNumber(note.getFill()),    //channel
-                 0                                   //trackIndex
-             );
-             //Update Stoptime if the note is the last one so far
-             if (stopTime < note.getX()+note.getWidth()) {
-                 stopTime = note.getX()+note.getWidth();
-             }
-         }
-         return stopTime;
-     }
+    public double buildSong(MidiPlayer midiPlayer) {
+        addProgramChanges(midiPlayer);
+        double stopTime = 0.0;
+        for (MusicalNote note : this.notes) {
+            midiPlayer.addNote(
+                    note.getPitch(),       //pitch
+                    note.getVolume(),      //volume
+                    note.getStartTick(),   //startTick
+                    note.getDuration(),    //duration
+                    note.getChannel(),     //channel
+                    note.getTrackIndex()   //trackIndex
+            );
+            //Update Stoptime if the note is the last one so far
+            if (stopTime < note.getStartTick() + note.getDuration()) {
+                stopTime = note.getStartTick() + note.getDuration();
+            }
+        }
+        return stopTime;
+    }
 }

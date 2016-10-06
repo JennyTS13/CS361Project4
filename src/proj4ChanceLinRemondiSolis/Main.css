@@ -12,7 +12,6 @@
 
 .note {
   -fx-opacity: 0.5;
-  -fx-stroke: black;
   -fx-stroke-type: INSIDE;
 }
 
