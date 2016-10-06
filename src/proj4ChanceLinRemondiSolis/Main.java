@@ -53,16 +53,15 @@ public class Main extends Application {
     public void initialize() {
         this.compositionSheet = new CompositionSheet(this.fxCompositionSheet);
         this.tempoLine = new TempoLine(this.fxTempoLine);
+        handleInstrumentChange();
     }
 
     /**
      * Changes the instrument that the future notes will be played with
      */
     @FXML
-    public void changeInstrument(){
-        //TODO
-        System.out.println(((RadioButton)instrumentGroup.getSelectedToggle()).getText());
-        System.out.println(((RadioButton)instrumentGroup.getSelectedToggle()).getTextFill().toString());
+    public void handleInstrumentChange(){
+        this.compositionSheet.changeInstrument(((RadioButton)instrumentGroup.getSelectedToggle()).getTextFill());
     }
 
     /**
@@ -72,10 +71,14 @@ public class Main extends Application {
      * to this functionality (e.g. left click event)
      */
     @FXML
-    protected void handleAddNote(MouseEvent mouseEvent) {
-        this.compositionSheet.addNoteToComposition(
-            mouseEvent.getX(), mouseEvent.getY()
-        );
+    protected void handleCompositionClick(MouseEvent mouseEvent) {
+        if (this.tempoLine.isVisible()){
+            this.handleStopMusic();
+        }
+        else {
+            this.compositionSheet.addNoteToComposition(
+                    mouseEvent.getX(), mouseEvent.getY());
+        }
     }
 
     /**
@@ -92,10 +95,9 @@ public class Main extends Application {
      * Stops the midi player, the animation, and hides the tempo bar
      * This code/docstring is "borrowed" by Alex Rinker from his group's proj 2
      *
-     * @param event the event which causes the midiplayer to stop
      */
     @FXML
-    protected void handleStopMusic(ActionEvent event) {
+    protected void handleStopMusic() {
         this.midiPlayer.stop();
         this.tempoLine.stopAnimation();
         this.tempoLine.hideTempoLine();

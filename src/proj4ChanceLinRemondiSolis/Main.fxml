@@ -35,31 +35,32 @@
     </top>
     <center>
         <ScrollPane BorderPane.alignment="CENTER">
-            <Pane fx:id="fxCompositionSheet" onMouseClicked="#handleAddNote">
+            <Pane fx:id="fxCompositionSheet" onMouseClicked="#handleCompositionClick">
                 <Line fx:id="fxTempoLine" endY="1280" visible="false" />
             </Pane>
         </ScrollPane>
     </center>
     <left>
         <Pane fx:id="instrumentPane">
-            <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#changeInstrument" selected="true" text="Piano" textFill="Gray" >
+            <RadioButton layoutX="10.0" layoutY="10.0" onAction="#handleInstrumentChange"
+                         selected="true" text="Piano" textFill="Gray" >
                 <toggleGroup>
                     <ToggleGroup fx:id="instrumentGroup" />
                 </toggleGroup>
             </RadioButton>
-            <RadioButton layoutX="10.0" layoutY="50.0" mnemonicParsing="false" onAction="#changeInstrument"
+            <RadioButton layoutX="10.0" layoutY="50.0" onAction="#handleInstrumentChange"
                          text="Harpsichord" textFill="green" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="90.0" mnemonicParsing="false" onAction="#changeInstrument"
+            <RadioButton layoutX="10.0" layoutY="90.0" onAction="#handleInstrumentChange"
                          text="Marimba" textFill="blue" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#changeInstrument"
+            <RadioButton layoutX="10.0" layoutY="130.0" onAction="#handleInstrumentChange"
                          text="Organ" textFill="goldenrod" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="170.0" mnemonicParsing="false" onAction="#changeInstrument"
+            <RadioButton layoutX="10.0" layoutY="170.0" onAction="#handleInstrumentChange"
                          text="Accordion" textFill="magenta" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#changeInstrument"
+            <RadioButton layoutX="10.0" layoutY="210.0" onAction="#handleInstrumentChange"
                          text="Guitar" textFill="deepskyblue" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="250.0" mnemonicParsing="false" onAction="#changeInstrument"
+            <RadioButton layoutX="10.0" layoutY="250.0" onAction="#handleInstrumentChange"
                          text="Violin" textFill="black" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="290.0" mnemonicParsing="false" onAction="#changeInstrument"
+            <RadioButton layoutX="10.0" layoutY="290.0" onAction="#handleInstrumentChange"
                          text="French Horn" textFill="brown" toggleGroup="$instrumentGroup" />
         </Pane>
     </left>

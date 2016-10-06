@@ -47,6 +47,9 @@ public class TempoLine {
         this.tempoLine.setVisible(false);
     }
 
+    public boolean isVisible(){
+        return this.tempoLine.isVisible();
+    }
     /**
      * Moves the tempoline across the screen based on the input
      * stop "time"/location
