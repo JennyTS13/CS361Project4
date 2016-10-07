@@ -122,7 +122,7 @@ public class CompositionSheet {
     }
 
     /**
-     *
+     * Clears the list of selected notes
      */
     public void clearSelectedNotes(){
         for(MusicalNote note : this.selectedNotes){
@@ -132,7 +132,19 @@ public class CompositionSheet {
     }
 
     /**
-     * @param midiPlayer
+     * Deletes all the selected notes from the composition sheet
+     */
+    public void deleteNotes(){
+        for(MusicalNote note: this.selectedNotes){
+            this.composition.getChildren().remove(note.getNoteBox());
+            this.notes.remove(note);
+        }
+        this.selectedNotes.clear();
+    }
+
+    /**
+     * Adds program changes to the MIDI player, assigning an instrument to each channel
+     * @param midiPlayer MIDI player that takes in the program changes
      */
     private void addProgramChanges(MidiPlayer midiPlayer) {
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 0, 0, 0, 0, 0);

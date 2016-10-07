@@ -58,11 +58,20 @@ public class Main extends Application {
     }
 
     /**
+     * Deletes the selected notes from the composition panel
+     */
+    @FXML
+    public void handleDelete(){
+        this.compositionSheet.deleteNotes();
+    }
+
+    /**
      * Changes the instrument that the future notes will be played with
      */
     @FXML
     public void handleInstrumentChange() {
-        this.compositionSheet.changeInstrument(((RadioButton) instrumentGroup.getSelectedToggle()).getTextFill());
+        RadioButton instrument = (RadioButton) instrumentGroup.getSelectedToggle();
+        this.compositionSheet.changeInstrument(instrument.getTextFill());
     }
 
     /**
@@ -83,6 +92,11 @@ public class Main extends Application {
                     mouseEvent.getX(),
                     mouseEvent.getY());
         }
+    }
+
+    @FXML
+    public void handleMouseDrag(){
+        System.out.println("Mouse drag");
     }
 
     /**
@@ -148,7 +162,7 @@ public class Main extends Application {
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Main.fxml"));
-            fxmlLoader.setController(this);      // set Composition as the controller
+            fxmlLoader.setController(this);      // set Main as the controller
             root = fxmlLoader.load();
         } catch (IOException e) {
             e.printStackTrace();
