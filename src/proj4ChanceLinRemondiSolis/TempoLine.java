@@ -23,16 +23,16 @@ import javafx.util.Duration;
  * @author Ana Sofia Solis Canales
  * @author Mike Remondi
  */
+
 public class TempoLine {
     private Line tempoLine;
     private TranslateTransition tempoAnimation = new TranslateTransition();
 
+
     /**
-     * Initializes the tempoAnimation object with the default
-     * values it needs
-     * Provides the animation with the tempoLine which it moves
-     * makes sure the animation is linear
-     * and sets our onFinished event
+     * Constructor
+     *
+     * @param tempoLine graphic representation of reproduction time
      */
     public TempoLine(Line tempoLine) {
         this.tempoLine = tempoLine;
@@ -42,7 +42,7 @@ public class TempoLine {
     }
 
     /**
-     * if there is a tempoline in the compositionsheet, remove it.
+     * if there is a tempo line in the composition pane, remove it.
      */
     public void hideTempoLine() {
         this.tempoLine.setVisible(false);
@@ -58,9 +58,8 @@ public class TempoLine {
     }
 
     /**
-     * Moves the tempoline across the screen based on the input
-     * stop "time"/location
-     * Uses a TranslateTransition to do so.
+     * Updates the information in the tempo line and animation for
+     * the reproduction of a composition
      *
      * @param stopTime this is the stop location (e.g time) which is the
      *                 location of the right edge of the final note to be played

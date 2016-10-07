@@ -38,7 +38,7 @@ public class Main extends Application {
 
     @FXML
     private Pane fxCompositionSheet;
-    private CompositionSheet compositionSheet;
+    private CompositionPaneManager compositionPaneManager;
 
     @FXML
     private Line fxTempoLine;
@@ -48,11 +48,11 @@ public class Main extends Application {
     private ToggleGroup instrumentGroup;
 
     /**
-     * Seeds our CompositionSheet and TempoLine objects with the
+     * Seeds our CompositionPaneManager and TempoLine objects with the
      * fields from the FXML file after the FXML has been initialized
      */
     public void initialize() {
-        this.compositionSheet = new CompositionSheet(this.fxCompositionSheet);
+        this.compositionPaneManager = new CompositionPaneManager(this.fxCompositionSheet);
         this.tempoLine = new TempoLine(this.fxTempoLine);
         handleInstrumentChange();
     }
@@ -62,7 +62,7 @@ public class Main extends Application {
      */
     @FXML
     public void handleDelete() {
-        this.compositionSheet.deleteNotes();
+        this.compositionPaneManager.deleteNotes();
     }
 
     /**
@@ -71,7 +71,7 @@ public class Main extends Application {
     @FXML
     public void handleInstrumentChange() {
         RadioButton instrument = (RadioButton) instrumentGroup.getSelectedToggle();
-        this.compositionSheet.changeInstrument(instrument.getTextFill());
+        this.compositionPaneManager.changeInstrument(instrument.getTextFill());
     }
 
     /**
@@ -87,9 +87,9 @@ public class Main extends Application {
         //checking this so that we dont confuse drags with clicks
         else if (mouseEvent.isStillSincePress()) {
             if (!mouseEvent.isControlDown()) {
-                this.compositionSheet.clearSelectedNotes();
+                this.compositionPaneManager.clearSelectedNotes();
             }
-            this.compositionSheet.addNoteToComposition(
+            this.compositionPaneManager.addNoteToComposition(
                     mouseEvent.getX(),
                     mouseEvent.getY());
         }
@@ -139,7 +139,8 @@ public class Main extends Application {
     protected void handlePlayMidi() {
         this.midiPlayer.stop();
         this.midiPlayer.clear();
-        double stopTime = compositionSheet.buildSong(this.midiPlayer);
+        this.compositionPaneManager.buildSong(this.midiPlayer);
+        double stopTime =this.compositionPaneManager.calculateStopTime();
         this.tempoLine.updateTempoLine(stopTime);
         playMusicAndAnimation();
     }

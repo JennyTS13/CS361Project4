@@ -22,14 +22,16 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
- * This class models a compostion sheet with notes.
+ * This class models a composition sheet manager.
+ * Deals with adding and manipulating all the data
+ * regarding the composition
  *
  * @author Graham Chance
  * @author Jenny Lin
  * @author Ana Sofia Solis Canales
  * @author Mike Remondi
  */
-public class CompositionSheet {
+public class CompositionPaneManager {
     private Pane composition;
     private ArrayList<MusicalNote> notes;
     private ArrayList<MusicalNote> selectedNotes;
@@ -37,11 +39,11 @@ public class CompositionSheet {
     private Hashtable<Paint, Integer> channelMapping;
 
     /**
-     * Initializes the composition sheet
+     * Constructor
      *
      * @param composition Where the rest of the composition sheet lives
      */
-    public CompositionSheet(Pane composition) {
+    public CompositionPaneManager(Pane composition) {
         this.composition = composition;
         this.notes = new ArrayList<>();
         this.selectedNotes = new ArrayList<>();
@@ -51,7 +53,7 @@ public class CompositionSheet {
     }
 
     /**
-     * Maps channel numbers to specific colors
+     * Maps channel numbers to specific instrument color association
      */
     public void setChannelMapping() {
         this.channelMapping.put(Color.GRAY, 0);
@@ -133,7 +135,7 @@ public class CompositionSheet {
     }
 
     /**
-     * Deletes all the selected notes from the composition sheet
+     * Deletes all the selected notes from the composition pane
      */
     public void deleteNotes() {
         for (MusicalNote note : this.selectedNotes) {
@@ -147,34 +149,41 @@ public class CompositionSheet {
      * Adds the note to the sound player
      *
      * @param midiPlayer MIDI sound player
-     * @return stop time of song
      */
-    public double buildSong(MidiPlayer midiPlayer) {
+    public void buildSong(MidiPlayer midiPlayer) {
         addProgramChanges(midiPlayer);
         double stopTime = 0.0;
         for (MusicalNote note : this.notes) {
             midiPlayer.addNote(
-                    note.getPitch(),       //pitch
-                    note.getVolume(),      //volume
-                    note.getStartTick(),   //startTick
-                    note.getDuration(),    //duration
-                    note.getChannel(),     //channel
+                    note.getPitch(),            //pitch
+                    note.getVolume(),          //volume
+                    note.getStartTick(),      //startTick
+                    note.getDuration(),      //duration
+                    note.getChannel(),      //channel
                     note.getTrackIndex()   //trackIndex
             );
-            //Update Stoptime if the note is the last one so far
-            if (stopTime < note.getStartTick() + note.getDuration()) {
+        }
+    }
+
+    /**
+     * Calculates the stop time for the composition created
+     * @return stopTime
+     */
+    public double calculateStopTime(){
+        double stopTime = 0.0;
+        for (MusicalNote note: this.notes){
+            if (stopTime < note.getStartTick() + note.getDuration()){
                 stopTime = note.getStartTick() + note.getDuration();
             }
         }
         return stopTime;
     }
-
     /**
-     * Checks if note in composition.
+     * Checks if note is in composition.
      *
      * @param xPos x position of note in composition
      * @param yPos y position of note in composition
-     * @return if in composition or not
+     * @return true or false in composition
      */
     private boolean inComposition(double xPos, double yPos) {
         if (!this.notes.isEmpty()) {
@@ -191,9 +200,9 @@ public class CompositionSheet {
     }
 
     /**
-     * Maps instruments to a given channel
+     * Maps instruments to a given channel in the MIDI sounds player
      *
-     * @param midiPlayer MIDI player that takes in the program changes
+     * @param midiPlayer MIDI sounds player
      */
     private void addProgramChanges(MidiPlayer midiPlayer) {
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 0, 0, 0, 0, 0);
