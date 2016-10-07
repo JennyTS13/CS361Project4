@@ -61,7 +61,7 @@ public class Main extends Application {
      * Deletes the selected notes from the composition panel
      */
     @FXML
-    public void handleDelete(){
+    public void handleDelete() {
         this.compositionSheet.deleteNotes();
     }
 
@@ -84,7 +84,9 @@ public class Main extends Application {
     protected void handleCompositionClick(MouseEvent mouseEvent) {
         if (this.tempoLine.isVisible()) {
             this.handleStopMusic();
-        } else {
+        }
+        //checking this so that we dont confuse drags with clicks
+        else if (mouseEvent.isStillSincePress()) {
             if (!mouseEvent.isControlDown()) {
                 this.compositionSheet.clearSelectedNotes();
             }
@@ -95,7 +97,7 @@ public class Main extends Application {
     }
 
     @FXML
-    public void handleMouseDrag(){
+    public void handleMouseDrag() {
         System.out.println("Mouse drag");
     }
 
