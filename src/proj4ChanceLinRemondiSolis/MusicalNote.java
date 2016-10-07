@@ -24,10 +24,7 @@ import javafx.scene.shape.Rectangle;
 public class MusicalNote {
 
     private Rectangle noteBox;
-    private int pitch;
     private int volume;
-    private int startTick;
-    private int duration;
     private int channel;
     private int trackIndex;
     private boolean selected;
@@ -40,10 +37,7 @@ public class MusicalNote {
      */
     public MusicalNote(Rectangle newNoteBox, int channel) {
         this.noteBox = newNoteBox;
-        this.pitch = 127 - ((int) this.noteBox.getY() / 10);
         this.volume = 100;
-        this.startTick = (int) this.noteBox.getX();
-        this.duration = (int) this.noteBox.getWidth();
         this.channel = channel;
         this.trackIndex = 0;
         this.setSelected(true);
@@ -62,7 +56,7 @@ public class MusicalNote {
      * @return Pitch of the note
      */
     public int getPitch(){
-        return this.pitch;
+        return 127 - ((int) this.noteBox.getY() / 10);
     }
 
     /**
@@ -78,7 +72,7 @@ public class MusicalNote {
      * @return Starting tick of the note
      */
     public int getStartTick(){
-        return this.startTick;
+        return (int) this.noteBox.getX();
     }
 
     /**
@@ -86,7 +80,7 @@ public class MusicalNote {
      * @return How long the note plays
      */
     public int getDuration(){
-        return this.duration;
+        return (int) this.noteBox.getWidth();
     }
 
     /**
