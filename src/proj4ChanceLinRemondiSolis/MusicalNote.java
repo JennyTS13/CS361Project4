@@ -33,8 +33,9 @@ public class MusicalNote {
 
     /**
      * Constructor
+     *
      * @param newNoteBox Rectangle object that represents the note graphically
-     * @param channel the channel that the note belongs to
+     * @param channel    the channel that the note belongs to
      */
     public MusicalNote(Rectangle newNoteBox, int channel) {
         this.noteBox = newNoteBox;
@@ -44,84 +45,98 @@ public class MusicalNote {
         this.setSelected(true);
     }
 
-    public Bounds getInBounds(){
+    /**
+     * Accessor method for the bounds of the note in the ocmpositon
+     *
+     * @return bounds of the note
+     */
+    public Bounds getInBounds() {
         return this.noteBox.getBoundsInParent();
     }
+
     /**
      * Accessor method for the graphical note box
+     *
      * @return Graphical note box
      */
-    public Rectangle getNoteBox(){
+    public Rectangle getNoteBox() {
         return this.noteBox;
     }
 
     /**
      * Accessor method for pitch
+     *
      * @return Pitch of the note
      */
-    public int getPitch(){
+    public int getPitch() {
         return 127 - ((int) this.noteBox.getY() / 10);
     }
 
     /**
      * Accessor method for volume
+     *
      * @return Volume of the note
      */
-    public int getVolume(){
+    public int getVolume() {
         return this.volume;
     }
 
     /**
      * Accessor method for when the note starts
+     *
      * @return Starting tick of the note
      */
-    public int getStartTick(){
+    public int getStartTick() {
         return (int) this.noteBox.getX();
     }
 
     /**
      * Accessor method for note duration
+     *
      * @return How long the note plays
      */
-    public int getDuration(){
+    public int getDuration() {
         return (int) this.noteBox.getWidth();
     }
 
     /**
      * Accessor method for channel information
+     *
      * @return Channel that the note is played on
      */
-    public int getChannel(){
+    public int getChannel() {
         return this.channel;
     }
 
     /**
      * Accessor method for track number
+     *
      * @return Track for the note
      */
-    public int getTrackIndex(){
+    public int getTrackIndex() {
         return this.trackIndex;
     }
 
     /**
      * Accessor method for if a note is selected or not
+     *
      * @return Whether or not the note is selected
      */
-    public boolean isSelected(){
+    public boolean isSelected() {
         return this.selected;
     }
 
     /**
      * Sets whether or not the note is selected
+     *
      * @param isSelected Boolean value indicating if the note is selected or not
      */
-    public void setSelected(boolean isSelected){
+    public void setSelected(boolean isSelected) {
         this.selected = isSelected;
-        if(this.selected) {
+        if (this.selected) {
             this.noteBox.setStroke(Color.RED);
             this.noteBox.setStrokeWidth(3);
-        }
-        else{
+        } else {
             this.noteBox.setStroke(Color.BLACK);
             this.noteBox.setStrokeWidth(1);
         }

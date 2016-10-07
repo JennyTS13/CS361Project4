@@ -75,10 +75,9 @@ public class Main extends Application {
     }
 
     /**
-     * Adds a note to the composition panel
+     * Handles the different Mouse Click actions in the composition
      *
-     * @param mouseEvent this is the mouseEvent that is mapped
-     *                   to this functionality (e.g. left click event)
+     * @param mouseEvent click on the composition
      */
     @FXML
     protected void handleCompositionClick(MouseEvent mouseEvent) {
@@ -96,24 +95,23 @@ public class Main extends Application {
         }
     }
 
+
     @FXML
     public void handleMouseDrag() {
         System.out.println("Mouse drag");
     }
 
     /**
-     * starts the midiplayer and the animation so they are
-     * very close in time with each other (milliseconds)
+     * starts the reproduction  of the composition
      */
-    protected void playMusicAndAnimation() {
+    private void playMusicAndAnimation() {
         this.tempoLine.playAnimation();
         this.midiPlayer.play();
     }
 
 
     /**
-     * Stops the midi player, the animation, and hides the tempo bar
-     * This code/docstring is "borrowed" by Alex Rinker from his group's proj 2
+     * Stops the reproduction of the composition
      */
     @FXML
     protected void handleStopMusic() {
@@ -133,17 +131,12 @@ public class Main extends Application {
         System.exit(0);
     }
 
+
     /**
-     * Creates a dialog box prompting the user for the starting note
-     * for use in the midi player.
-     * Then calls the playMidi method using that note (Integer)
-     * This code/docstring is "borrowed" by Alex Rinker from his group's proj 2
-     *
-     * @param event the event which should trigger the dialog box and
-     *              midiplayer combo functionality.
+     * Plays the sounds displayed in the composition.
      */
     @FXML
-    protected void handlePlayMidi(ActionEvent event) {
+    protected void handlePlayMidi() {
         this.midiPlayer.stop();
         this.midiPlayer.clear();
         double stopTime = compositionSheet.buildSong(this.midiPlayer);
@@ -153,8 +146,10 @@ public class Main extends Application {
 
     /**
      * Sets up the main GUI to play a scale.
-     * Player contains a menu bar with exit option and two buttons:
-     * play and stop.
+     * Player contains a menu bar:
+     * File menu: exit option
+     * Edit menu: Select all and Delete options
+     * Action menu: Play and Stop options
      *
      * @param primaryStage the stage to display the gui
      */

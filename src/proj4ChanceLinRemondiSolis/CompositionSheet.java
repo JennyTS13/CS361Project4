@@ -37,7 +37,7 @@ public class CompositionSheet {
     private Hashtable<Paint, Integer> channelMapping;
 
     /**
-     * Constructor
+     * Initializes the composition sheet
      *
      * @param composition Where the rest of the composition sheet lives
      */
@@ -47,7 +47,6 @@ public class CompositionSheet {
         this.selectedNotes = new ArrayList<>();
         this.channelMapping = new Hashtable<>();
         setChannelMapping();
-
         createCompositionSheet();
     }
 
@@ -67,15 +66,17 @@ public class CompositionSheet {
     }
 
     /**
-     * Updates the current instrument color
+     * Updates the current color associated with an instrument
      *
-     * @param newInstrumentColor
+     * @param newInstrumentColor new color associated with new instrument
      */
     public void changeInstrument(Paint newInstrumentColor) {
         this.instrumentColor = newInstrumentColor;
     }
 
     /**
+     * Retrieves the channel number associated with the color of
+     * the current instrument
      *
      * @param instrumentColor Text color of the instrument
      * @return Channel number which corresponds to the insturment color
@@ -85,9 +86,8 @@ public class CompositionSheet {
     }
 
     /**
-     * Generates the Composition nodes by creating a scrollPane
-     * which holds a regular pane object (serves as the canvas)
-     * to which we add a bunch of rectangles which serve as the lines
+     * Creates a visual representation of a composition panel
+     * similar to a staff lined workbook
      */
     public void createCompositionSheet() {
         Line staffLine;
@@ -98,29 +98,10 @@ public class CompositionSheet {
         }
     }
 
+
     /**
-     * Checks if note in composition
-     * @param xPos x position of note in composition
-     * @param yPos y position of note in composition
-     * @return if in composition or not
-     */
-    private Boolean inComposition(double xPos, double yPos){
-        if (!this.notes.isEmpty()) {
-            for (MusicalNote note : this.notes) {
-                Bounds bVal = note.getInBounds();
-                if (bVal.contains(xPos, yPos)) {
-                    note.setSelected(true);
-                    this.selectedNotes.add(note);
-                    return Boolean.TRUE;
-                }
-            }
-        }
-        return Boolean.FALSE;
-    }
-    /**
-     * Generates a rectangle which represents a note on the composition Pane
-     * The rectangle will be colored blue, adjusted to fit within the
-     * clicked lines, and be added to the composition pane.
+     * Creates a visual representation of the the notes
+     * in the composition sheet.
      *
      * @param xPos the input x position of the note
      * @param yPos the input y position of the note
@@ -128,7 +109,7 @@ public class CompositionSheet {
     public void addNoteToComposition(double xPos, double yPos) {
         if (yPos >= 0 && yPos < 1280) {
             Rectangle noteBox = new Rectangle(100.0, 10.0);
-            if (!inComposition(xPos, yPos)){
+            if (!inComposition(xPos, yPos)) {
                 noteBox.getStyleClass().add("note");
                 noteBox.setX(xPos);
                 noteBox.setY(yPos - (yPos % 10));
@@ -144,8 +125,8 @@ public class CompositionSheet {
     /**
      * Clears the list of selected notes
      */
-    public void clearSelectedNotes(){
-        for(MusicalNote note : this.selectedNotes){
+    public void clearSelectedNotes() {
+        for (MusicalNote note : this.selectedNotes) {
             note.setSelected(false);
         }
         this.selectedNotes.clear();
@@ -154,8 +135,8 @@ public class CompositionSheet {
     /**
      * Deletes all the selected notes from the composition sheet
      */
-    public void deleteNotes(){
-        for(MusicalNote note: this.selectedNotes){
+    public void deleteNotes() {
+        for (MusicalNote note : this.selectedNotes) {
             this.composition.getChildren().remove(note.getNoteBox());
             this.notes.remove(note);
         }
@@ -163,27 +144,10 @@ public class CompositionSheet {
     }
 
     /**
-     * Adds program changes to the MIDI player, assigning an instrument to each channel
-     * @param midiPlayer MIDI player that takes in the program changes
-     */
-    private void addProgramChanges(MidiPlayer midiPlayer) {
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 0, 0, 0, 0, 0);
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 1, 6, 0, 0, 0);
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 2, 12, 0, 0, 0);
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 3, 19, 0, 0, 0);
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 4, 21, 0, 0, 0);
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 5, 25, 0, 0, 0);
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 6, 40, 0, 0, 0);
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 7, 60, 0, 0, 0);
-    }
-
-    /**
-     * Creates a composition using all of the rectangles in our
-     * compositionSheet, based on their X and Y positions
-     * (timing and pitch respectively)
-     * <p>
-     * Also Keeps track of the last note and when it ends
-     * and returns it for use in the animation
+     * Adds the note to the sound player
+     *
+     * @param midiPlayer MIDI sound player
+     * @return stop time of song
      */
     public double buildSong(MidiPlayer midiPlayer) {
         addProgramChanges(midiPlayer);
@@ -204,4 +168,43 @@ public class CompositionSheet {
         }
         return stopTime;
     }
+
+    /**
+     * Checks if note in composition.
+     *
+     * @param xPos x position of note in composition
+     * @param yPos y position of note in composition
+     * @return if in composition or not
+     */
+    private boolean inComposition(double xPos, double yPos) {
+        if (!this.notes.isEmpty()) {
+            for (MusicalNote note : this.notes) {
+                Bounds bVal = note.getInBounds();
+                if (bVal.contains(xPos, yPos)) {
+                    note.setSelected(true);
+                    this.selectedNotes.add(note);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Maps instruments to a given channel
+     *
+     * @param midiPlayer MIDI player that takes in the program changes
+     */
+    private void addProgramChanges(MidiPlayer midiPlayer) {
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 0, 0, 0, 0, 0);
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 1, 6, 0, 0, 0);
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 2, 12, 0, 0, 0);
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 3, 19, 0, 0, 0);
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 4, 21, 0, 0, 0);
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 5, 25, 0, 0, 0);
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 6, 40, 0, 0, 0);
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 7, 60, 0, 0, 0);
+    }
+
+
 }

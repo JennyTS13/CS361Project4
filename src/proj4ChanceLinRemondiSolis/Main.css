@@ -11,8 +11,8 @@
 }
 
 .note {
-  -fx-opacity: 0.5;
-  -fx-stroke-type: INSIDE;
+    -fx-opacity: 0.5;
+    -fx-stroke-type: INSIDE;
 }
 
 #fxCompositionSheet {
@@ -21,7 +21,7 @@
 }
 
 #fxTempoLine {
-  -fx-stroke: red;
+    -fx-stroke: red;
 }
 
 #instrumentPane {
