@@ -10,6 +10,7 @@
 
 package proj4ChanceLinRemondiSolis;
 
+import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -97,7 +98,25 @@ public class CompositionSheet {
         }
     }
 
-
+    /**
+     * Checks if note in composition
+     * @param xPos x position of note in composition
+     * @param yPos y position of note in composition
+     * @return if in composition or not
+     */
+    private Boolean inComposition(double xPos, double yPos){
+        if (!this.notes.isEmpty()) {
+            for (MusicalNote note : this.notes) {
+                Bounds bVal = note.getInBounds();
+                if (bVal.contains(xPos, yPos)) {
+                    note.setSelected(true);
+                    this.selectedNotes.add(note);
+                    return Boolean.TRUE;
+                }
+            }
+        }
+        return Boolean.FALSE;
+    }
     /**
      * Generates a rectangle which represents a note on the composition Pane
      * The rectangle will be colored blue, adjusted to fit within the
@@ -109,15 +128,16 @@ public class CompositionSheet {
     public void addNoteToComposition(double xPos, double yPos) {
         if (yPos >= 0 && yPos < 1280) {
             Rectangle noteBox = new Rectangle(100.0, 10.0);
-            noteBox.getStyleClass().add("note");
-            noteBox.setX(xPos);
-            noteBox.setY(yPos - (yPos % 10));
-            noteBox.setFill(this.instrumentColor);
-            this.composition.getChildren().add(noteBox);
-
-            MusicalNote note = new MusicalNote(noteBox, getChannelNumber(noteBox.getFill()));
-            this.notes.add(note);
-            this.selectedNotes.add(note);
+            if (!inComposition(xPos, yPos)){
+                noteBox.getStyleClass().add("note");
+                noteBox.setX(xPos);
+                noteBox.setY(yPos - (yPos % 10));
+                noteBox.setFill(this.instrumentColor);
+                this.composition.getChildren().add(noteBox);
+                MusicalNote note = new MusicalNote(noteBox, getChannelNumber(noteBox.getFill()));
+                this.notes.add(note);
+                this.selectedNotes.add(note);
+            }
         }
     }
 

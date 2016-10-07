@@ -10,6 +10,7 @@
 
 package proj4ChanceLinRemondiSolis;
 
+import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -43,6 +44,9 @@ public class MusicalNote {
         this.setSelected(true);
     }
 
+    public Bounds getInBounds(){
+        return this.noteBox.getBoundsInParent();
+    }
     /**
      * Accessor method for the graphical note box
      * @return Graphical note box
