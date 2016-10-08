@@ -64,7 +64,6 @@ public class CompositionPaneManager {
         this.channelMapping.put(Color.DEEPSKYBLUE, 5);
         this.channelMapping.put(Color.BLACK, 6);
         this.channelMapping.put(Color.BROWN, 7);
-
     }
 
     /**
@@ -214,6 +213,4 @@ public class CompositionPaneManager {
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 6, 40, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 7, 60, 0, 0, 0);
     }
-
-
 }
