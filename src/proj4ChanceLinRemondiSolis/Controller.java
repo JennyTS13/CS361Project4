@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 /**
 * Handles all user GUI interactions and coordinates with the MidiPlayer
@@ -70,18 +71,13 @@ public class Controller {
      */
     @FXML
     protected void handleCompositionClick(MouseEvent mouseEvent) {
-        if (!mouseEvent.isStillSincePress()) {
-            return;
-        }
-
+        if (!mouseEvent.isStillSincePress()) { return; }
         this.handleStopMusic();
-        if (!mouseEvent.isControlDown()) {
-            this.compositionPaneManager.clearSelectedNotes();
-            this.compositionPaneManager.addNoteToComposition(
-                    mouseEvent.getX(),
-                    mouseEvent.getY());
+        if (mouseEvent.isControlDown()) {
+            compositionPaneManager.handleControlClickAt(mouseEvent.getX(),mouseEvent.getY());
+        } else {
+            compositionPaneManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
         }
-
     }
 
     @FXML

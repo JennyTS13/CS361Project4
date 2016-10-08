@@ -266,6 +266,24 @@ public class CompositionPaneManager {
         isMovingNotes = false;
     }
 
+    public void handleClickAt(double x, double y) {
+        clearSelectedNotes();
+        Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
+        if (noteAtClickLocation.isPresent()) {
+            selectNote(noteAtClickLocation.get());
+        } else {
+            addNoteToComposition(x,y);
+        }
+
+    }
+
+    public void handleControlClickAt(double x, double y) {
+        Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
+        if (noteAtClickLocation.isPresent()) {
+            selectNote(noteAtClickLocation.get());
+        }
+    }
+
     public void handleDragStartedAtLocation(double x, double y) {
         System.out.println("drag started");
         resizeDirection = ResizeDirection.NONE;
