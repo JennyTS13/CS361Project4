@@ -95,17 +95,15 @@ public class Controller {
             }
         }
 
-        if (inNoteBounds) {
-            if (lastDragLocation != null) {
-                compositionPaneManager.moveSelectedNotes(mouseEvent.getX() - lastDragLocation.x, mouseEvent.getY() - lastDragLocation.y);
-            } else {
-                lastDragLocation = new Coordinates();
-            }
+        if (inNoteBounds && lastDragLocation == null) {
+            lastDragLocation = new Coordinates();
             lastDragLocation.x = mouseEvent.getX();
             lastDragLocation.y = mouseEvent.getY();
-        } else {
-
-
+            return;
+        } else if (lastDragLocation != null) {
+            compositionPaneManager.moveSelectedNotes(mouseEvent.getX() - lastDragLocation.x, mouseEvent.getY() - lastDragLocation.y);
+            lastDragLocation.x = mouseEvent.getX();
+            lastDragLocation.y = mouseEvent.getY();
         }
 
     }
