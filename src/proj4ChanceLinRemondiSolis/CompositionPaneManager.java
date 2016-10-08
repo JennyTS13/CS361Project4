@@ -20,6 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javax.sound.midi.ShortMessage;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Optional;
 
 /**
  * This class models a composition sheet manager.
@@ -37,6 +38,8 @@ public class CompositionPaneManager {
     private ArrayList<MusicalNote> selectedNotes;
     private Paint instrumentColor;
     private Hashtable<Paint, Integer> channelMapping;
+    private boolean isMovingNotes;
+    private ResizeDirection resizeDirection = ResizeDirection.NONE;
 
     /**
      * Constructor
@@ -110,7 +113,7 @@ public class CompositionPaneManager {
     public void addNoteToComposition(double xPos, double yPos) {
         if (yPos >= 0 && yPos < 1280) {
             Rectangle noteBox = new Rectangle(100.0, 10.0);
-            if (!inComposition(xPos, yPos)) {
+            if (!getNoteExistsAtCoordinates(xPos, yPos)) {
                 noteBox.getStyleClass().add("note");
                 noteBox.setX(xPos);
                 noteBox.setY(yPos - (yPos % 10));
@@ -118,8 +121,7 @@ public class CompositionPaneManager {
                 this.composition.getChildren().add(noteBox);
                 MusicalNote note = new MusicalNote(noteBox, getChannelNumber(noteBox.getFill()));
                 this.notes.add(note);
-                note.setSelected(true);
-                this.selectedNotes.add(note);
+                selectNote(note);
             }
         }
     }
@@ -137,6 +139,11 @@ public class CompositionPaneManager {
         }
         this.selectedNotes.clear();
     }
+
+    public boolean getIsResizingNotes() {
+        return resizeDirection != ResizeDirection.NONE;
+    }
+
 
     /**
      * Deletes all the selected notes from the composition pane
@@ -195,18 +202,16 @@ public class CompositionPaneManager {
         return stopTime;
     }
     /**
-     * Checks if note is in composition at the location of the mouseClick
+     * Checks if note is in composition at the given location
      *
      * @param xPos x position of note in composition
      * @param yPos y position of note in composition
      * @return true or false in composition
      */
-    private boolean inComposition(double xPos, double yPos) {
+    private boolean getNoteExistsAtCoordinates(double xPos, double yPos) {
         if (!this.notes.isEmpty()) {
             for (MusicalNote note : this.notes) {
-                if (note.isInBounds(xPos,yPos)) {
-                    note.setSelected(true);
-                    this.selectedNotes.add(note);
+                if (note.getIsInBounds(xPos,yPos)) {
                     return true;
                 }
             }
@@ -230,20 +235,82 @@ public class CompositionPaneManager {
      * @param x MouseEvent x coordinate
      * @param y MouseEvent y coordinate
      */
-    public void findNoteByMouseClick(double x, double y) {
+    public Optional<MusicalNote> getNoteAtMouseClick(double x, double y) {
         for (MusicalNote note : this.notes) {
-            if (note.isInBounds(x, y)) {
-                selectedNotes.add(note);
-                note.setSelected(true);
-                selectedNotes.add(note);
+            if (note.getIsInBounds(x, y)) {
+                return Optional.of(note);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void selectNote(MusicalNote note) {
+        note.setSelected(true);
+        if (!selectedNotes.contains(note)) {
+            selectedNotes.add(note);
+        }
+    }
+
+
+    public void handleDragMoved(double dx, double dy) {
+
+        if (isMovingNotes) {
+            moveSelectedNotes(dx,dy);
+        } else if (getIsResizingNotes()) {
+            resizeSelectedNotes(dx);
+        }
+    }
+
+    public void handleDragEnded() {
+        resizeDirection = ResizeDirection.NONE;
+        isMovingNotes = false;
+    }
+
+    public void handleDragStartedAtLocation(double x, double y) {
+        System.out.println("drag started");
+        resizeDirection = ResizeDirection.NONE;
+        isMovingNotes = false;
+        final boolean onNote = getNoteExistsAtCoordinates(x, y);
+        if (onNote) {
+            boolean onNoteEdge = false;
+            for (MusicalNote note : notes) {
+                if (note.getIsOnEdge(x,y)) {
+                    onNoteEdge = true;
+                    if (x < note.getBounds().getMinX() + note.getBounds().getWidth()/2) {
+                        resizeDirection = ResizeDirection.LEFT;
+                    } else {
+                        resizeDirection = ResizeDirection.RIGHT;
+                    }
+                    break;
+                }
+            }
+            if (!onNoteEdge) {
+                isMovingNotes = true;
             }
         }
     }
 
 
     public  void moveSelectedNotes(double dx, double dy) {
+        System.out.println("moving");
         for (MusicalNote note : selectedNotes) {
             note.move(dx,dy);
+        }
+    }
+
+    public void resizeSelectedNotes(double dx) {
+        System.out.println("resizing");
+        for (MusicalNote note : selectedNotes) {
+            switch (resizeDirection) {
+                case RIGHT:
+                    note.resizeRight(dx);
+                    break;
+                case LEFT:
+                    note.resizeLeft(dx);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -261,5 +328,9 @@ public class CompositionPaneManager {
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 5, 25, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 6, 40, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 7, 60, 0, 0, 0);
+    }
+
+    private enum ResizeDirection {
+        RIGHT, LEFT, NONE;
     }
 }

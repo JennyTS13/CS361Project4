@@ -10,7 +10,11 @@
 
 package proj4ChanceLinRemondiSolis;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -43,6 +47,8 @@ public class MusicalNote {
         this.channel = channel;
         this.trackIndex = 0;
         this.setSelected(true);
+
+
     }
 
     /**
@@ -62,24 +68,29 @@ public class MusicalNote {
      * @param y MouseEvent y coordinate
      * @return boolean value for whether the click is inside of the rectangle.
      */
-    public boolean isInBounds(double x, double y){
+    public boolean getIsInBounds(double x, double y){
         Bounds bounds = getBounds();
 
-        System.out.println("MOUSE X: " + x);
-        System.out.println("MOUSE Y: " + y);
-        System.out.println("BOX MAX X: " + bounds.getMaxX());
-        System.out.println("BOX MAX Y: " + bounds.getMaxY());
-        System.out.println("BOX Min X: " + bounds.getMinX());
-        System.out.println("BOX Min Y: " + bounds.getMinY());
+//        System.out.println("MOUSE X: " + x);
+//        System.out.println("MOUSE Y: " + y);
+//        System.out.println("BOX MAX X: " + bounds.getMaxX());
+//        System.out.println("BOX MAX Y: " + bounds.getMaxY());
+//        System.out.println("BOX Min X: " + bounds.getMinX());
+//        System.out.println("BOX Min Y: " + bounds.getMinY());
 
 
-        if (x < bounds.getMaxX() &&
+        return (x < bounds.getMaxX() &&
                 y < bounds.getMaxY() &&
                 x > bounds.getMinX() &&
-                y > bounds.getMinY()){
-            return true;
-        }
-        return false;
+                y > bounds.getMinY());
+    }
+
+    public boolean getIsOnEdge(double x, double y) {
+        Bounds bounds = getBounds();
+        return  y < bounds.getMaxY() &&
+                y > bounds.getMinY() &&
+                ((x <= bounds.getMinX() + 5) && x > bounds.getMinX()) ||
+                ((x >= bounds.getMaxX() - 5) && x < bounds.getMaxX());
     }
 
     /**
@@ -136,6 +147,19 @@ public class MusicalNote {
         return this.channel;
     }
 
+    public void move(double dx, double dy) {
+        setPosition(noteBox.getX() + dx, noteBox.getY() + dy);
+    }
+
+    public void resizeRight(double dx) {
+        this.noteBox.setWidth(noteBox.getWidth() + dx);
+    }
+
+    public void resizeLeft(double dx) {
+        this.noteBox.setWidth(noteBox.getWidth() - dx);
+        this.noteBox.setX(noteBox.getX() + dx);
+    }
+
     /**
      * Accessor method for track number
      *
@@ -144,6 +168,13 @@ public class MusicalNote {
     public int getTrackIndex() {
         return this.trackIndex;
     }
+
+
+    public void setPosition(double x, double y) {
+        this.noteBox.setX(x);
+        this.noteBox.setY(y);
+    }
+
 
     /**
      * Accessor method for if a note is selected or not
@@ -160,7 +191,6 @@ public class MusicalNote {
      * @param isSelected Boolean value indicating if the note is selected or not
      */
     public void setSelected(boolean isSelected) {
-        System.out.println("HERE IN SET SELECTED");
         this.selected = isSelected;
         if (this.selected) {
             this.noteBox.setStroke(Color.RED);

@@ -23,7 +23,7 @@ public class Controller {
     private CompositionPaneManager compositionPaneManager;
     @FXML private Line fxTempoLine;
     private TempoLine tempoLine;
-    private Coordinates lastDragLocation;
+    private Coordinates lastDragLocation = new Coordinates();
 
 
     @FXML private ToggleGroup instrumentGroup;
@@ -70,7 +70,9 @@ public class Controller {
      */
     @FXML
     protected void handleCompositionClick(MouseEvent mouseEvent) {
-        if (!mouseEvent.isStillSincePress()) { return; }
+        if (!mouseEvent.isStillSincePress()) {
+            return;
+        }
 
         this.handleStopMusic();
         if (!mouseEvent.isControlDown()) {
@@ -79,38 +81,27 @@ public class Controller {
                     mouseEvent.getX(),
                     mouseEvent.getY());
         }
-        else{
-            this.compositionPaneManager.findNoteByMouseClick(mouseEvent.getX(), mouseEvent.getY());
-        }
+
     }
 
+    @FXML
+    public void handleMousePressed(MouseEvent mouseEvent) {
+        lastDragLocation.x = mouseEvent.getX();
+        lastDragLocation.y = mouseEvent.getY();
+        compositionPaneManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY());
+    }
 
     @FXML
     public void handleMouseDrag(MouseEvent mouseEvent) {
-        boolean inNoteBounds = false;
-        for (MusicalNote note : compositionPaneManager.getNotes()) {
-            if (note.isInBounds(mouseEvent.getX(), mouseEvent.getY())) {
-                inNoteBounds = true;
-                break;
-            }
-        }
-
-        if (inNoteBounds && lastDragLocation == null) {
-            lastDragLocation = new Coordinates();
-            lastDragLocation.x = mouseEvent.getX();
-            lastDragLocation.y = mouseEvent.getY();
-            return;
-        } else if (lastDragLocation != null) {
-            compositionPaneManager.moveSelectedNotes(mouseEvent.getX() - lastDragLocation.x, mouseEvent.getY() - lastDragLocation.y);
-            lastDragLocation.x = mouseEvent.getX();
-            lastDragLocation.y = mouseEvent.getY();
-        }
-
+        compositionPaneManager.handleDragMoved(mouseEvent.getX() - lastDragLocation.x, mouseEvent.getY() - lastDragLocation.y);
+        lastDragLocation.x = mouseEvent.getX();
+        lastDragLocation.y = mouseEvent.getY();
     }
+
 
     @FXML
     public void handleMouseReleased(MouseEvent mouseEvent) {
-        lastDragLocation = null;
+        compositionPaneManager.handleDragEnded();
     }
 
     /**
