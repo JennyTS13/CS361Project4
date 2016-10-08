@@ -34,7 +34,7 @@
     </top>
     <center>
         <ScrollPane onMouseDragged="#handleMouseDrag" BorderPane.alignment="CENTER">
-            <Pane fx:id="fxCompositionSheet" onMouseClicked="#handleCompositionClick">
+            <Pane fx:id="fxCompositionSheet" onMouseClicked="#handleCompositionClick" onMouseDragged="#handleMouseDrag">
                 <Line fx:id="fxTempoLine" endY="1280" visible="false" />
             </Pane>
         </ScrollPane>
