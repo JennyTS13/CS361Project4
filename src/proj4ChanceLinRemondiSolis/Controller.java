@@ -14,7 +14,7 @@ import java.util.ArrayList;
 * Handles all user GUI interactions and coordinates with the MidiPlayer
 * and Composition.
 */
-public class Controller{
+public class Controller {
 
     private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
 
@@ -86,6 +86,8 @@ public class Controller{
 
     @FXML
     public void handleMouseDrag() {
+
+
         System.out.println("Mouse drag");
     }
 

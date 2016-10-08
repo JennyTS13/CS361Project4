@@ -40,9 +40,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         BorderPane root = null;
         try {
-            Controller controller = new Controller();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Main.fxml"));
-            fxmlLoader.setController(controller);      // set Main as the controller
             root = fxmlLoader.load();
         } catch (IOException e) {
             e.printStackTrace();
