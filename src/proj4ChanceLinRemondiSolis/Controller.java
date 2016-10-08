@@ -73,7 +73,7 @@ public class Controller {
                     mouseEvent.getY());
         }
         else{
-            this.compositionPaneManager.findNoteByMouseClick(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+            this.compositionPaneManager.findNoteByMouseClick(mouseEvent.getX(), mouseEvent.getY());
         }
     }
 

@@ -118,6 +118,7 @@ public class CompositionPaneManager {
                 this.composition.getChildren().add(noteBox);
                 MusicalNote note = new MusicalNote(noteBox, getChannelNumber(noteBox.getFill()));
                 this.notes.add(note);
+                note.setSelected(true);
                 this.selectedNotes.add(note);
             }
         }
@@ -194,7 +195,7 @@ public class CompositionPaneManager {
         return stopTime;
     }
     /**
-     * Checks if note is in composition.
+     * Checks if note is in composition at the location of the mouseClick
      *
      * @param xPos x position of note in composition
      * @param yPos y position of note in composition
@@ -203,10 +204,8 @@ public class CompositionPaneManager {
     private boolean inComposition(double xPos, double yPos) {
         if (!this.notes.isEmpty()) {
             for (MusicalNote note : this.notes) {
-                Bounds bVal = note.getInBounds();
+                Bounds bVal = note.getBounds();
                 if (bVal.contains(xPos, yPos)) {
-                    note.setSelected(true);
-                    this.selectedNotes.add(note);
                     return true;
                 }
             }
@@ -220,7 +219,10 @@ public class CompositionPaneManager {
 
     public void findNoteByMouseClick(double x, double y){
         for (MusicalNote note: this.notes) {
-            note.getInBounds();
+            if (note.isInBounds(x, y)){
+                note.setSelected(true);
+                selectedNotes.add(note);
+            }
         }
     }
 

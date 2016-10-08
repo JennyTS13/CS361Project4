@@ -46,7 +46,7 @@ public class MusicalNote {
     }
 
     /**
-     * Accessor method for the bounds of the note in the ocmpositon
+     * Accessor method for the bounds of the note in the compositon
      *
      * @return bounds of the note
      */
@@ -56,10 +56,19 @@ public class MusicalNote {
 
     public boolean isInBounds(double x, double y){
         Bounds bounds = getBounds();
+
+        System.out.println("MOUSE X: " + x);
+        System.out.println("MOUSE Y: " + y);
+        System.out.println("BOX MAX X: " + bounds.getMaxX());
+        System.out.println("BOX MAX Y: " + bounds.getMaxY());
+        System.out.println("BOX Min X: " + bounds.getMinX());
+        System.out.println("BOX Min Y: " + bounds.getMinY());
+
+
         if (x < bounds.getMaxX() &&
                 y < bounds.getMaxY() &&
                 x > bounds.getMinX() &&
-                x < bounds.getMinY()){
+                y > bounds.getMinY()){
             return true;
         }
         return false;
@@ -143,6 +152,7 @@ public class MusicalNote {
      * @param isSelected Boolean value indicating if the note is selected or not
      */
     public void setSelected(boolean isSelected) {
+        System.out.println("HERE IN SET SELECTED");
         this.selected = isSelected;
         if (this.selected) {
             this.noteBox.setStroke(Color.RED);
