@@ -50,8 +50,19 @@ public class MusicalNote {
      *
      * @return bounds of the note
      */
-    public Bounds getInBounds() {
+    public Bounds getBounds() {
         return this.noteBox.getBoundsInParent();
+    }
+
+    public boolean isInBounds(double x, double y){
+        Bounds bounds = getBounds();
+        if (x < bounds.getMaxX() &&
+                y < bounds.getMaxY() &&
+                x > bounds.getMinX() &&
+                x < bounds.getMinY()){
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -8,8 +8,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
-import java.util.ArrayList;
-
 /**
 * Handles all user GUI interactions and coordinates with the MidiPlayer
 * and Composition.
@@ -36,13 +34,11 @@ public class Controller {
     }
 
 
+    /**
+     * Sets all of the notes to be selected and adds them to the selected list.
+     */
     public void handleSelectAll(){
-        this.compositionPaneManager.clearSelectedNotes();
-        ArrayList<MusicalNote> notes = this.compositionPaneManager.getNotes();
-        for (MusicalNote note: notes){
-            note.setSelected(true);
-            this.compositionPaneManager.addNoteToSelectedNotes(note);
-        }
+        this.compositionPaneManager.selectAllNotes();
     }
 
     /**
@@ -69,25 +65,21 @@ public class Controller {
      */
     @FXML
     protected void handleCompositionClick(MouseEvent mouseEvent) {
-        if (this.tempoLine.isVisible()) {
-            this.handleStopMusic();
-        }
-        //checking this so that we dont confuse drags with clicks
-        else if (mouseEvent.isStillSincePress()) {
-            if (!mouseEvent.isControlDown()) {
-                this.compositionPaneManager.clearSelectedNotes();
-            }
+        this.handleStopMusic();
+        if (!mouseEvent.isControlDown()) {
+            this.compositionPaneManager.clearSelectedNotes();
             this.compositionPaneManager.addNoteToComposition(
                     mouseEvent.getX(),
                     mouseEvent.getY());
+        }
+        else{
+            this.compositionPaneManager.findNoteByMouseClick(mouseEvent.getSceneX(), mouseEvent.getSceneY());
         }
     }
 
 
     @FXML
     public void handleMouseDrag() {
-
-
         System.out.println("Mouse drag");
     }
 

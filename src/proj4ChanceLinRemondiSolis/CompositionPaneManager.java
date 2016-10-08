@@ -169,6 +169,18 @@ public class CompositionPaneManager {
     }
 
     /**
+     * Selects all of the notes and adds them to the selected arraylist.
+     */
+    public void selectAllNotes() {
+        this.clearSelectedNotes();
+        ArrayList<MusicalNote> notes = this.getNotes();
+        for (MusicalNote note : notes) {
+            note.setSelected(true);
+            this.addNoteToSelectedNotes(note);
+        }
+    }
+
+    /**
      * Calculates the stop time for the composition created
      * @return stopTime
      */
@@ -204,6 +216,12 @@ public class CompositionPaneManager {
 
     public ArrayList<MusicalNote> getNotes(){
         return this.notes;
+    }
+
+    public void findNoteByMouseClick(double x, double y){
+        for (MusicalNote note: this.notes) {
+            note.getInBounds();
+        }
     }
 
     /**
