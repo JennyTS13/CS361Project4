@@ -82,6 +82,7 @@ public class Controller {
 
     @FXML
     public void handleMousePressed(MouseEvent mouseEvent) {
+        if (mouseEvent.isControlDown()) { return; }
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
         compositionPaneManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY());

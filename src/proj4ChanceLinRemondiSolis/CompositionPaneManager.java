@@ -292,6 +292,11 @@ public class CompositionPaneManager {
         if (onNote) {
             boolean onNoteEdge = false;
             for (MusicalNote note : notes) {
+
+                if (note.getIsInBounds(x,y) && !note.isSelected()) {
+                    clearSelectedNotes();
+                    selectNote(note);
+                }
                 if (note.getIsOnEdge(x,y)) {
                     onNoteEdge = true;
                     if (x < note.getBounds().getMinX() + note.getBounds().getWidth()/2) {
