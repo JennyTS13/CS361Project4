@@ -4,9 +4,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+
+import java.util.ArrayList;
 
 /**
 * Handles all user GUI interactions and coordinates with the MidiPlayer
@@ -20,6 +23,8 @@ public class Controller {
     private CompositionPaneManager compositionPaneManager;
     @FXML private Line fxTempoLine;
     private TempoLine tempoLine;
+    private Coordinates lastDragLocation;
+
 
     @FXML private ToggleGroup instrumentGroup;
 
@@ -65,6 +70,8 @@ public class Controller {
      */
     @FXML
     protected void handleCompositionClick(MouseEvent mouseEvent) {
+        if (!mouseEvent.isStillSincePress()) { return; }
+
         this.handleStopMusic();
         if (!mouseEvent.isControlDown()) {
             this.compositionPaneManager.clearSelectedNotes();
@@ -79,8 +86,33 @@ public class Controller {
 
 
     @FXML
-    public void handleMouseDrag() {
-        System.out.println("Mouse drag");
+    public void handleMouseDrag(MouseEvent mouseEvent) {
+        boolean inNoteBounds = false;
+        for (MusicalNote note : compositionPaneManager.getNotes()) {
+            if (note.isInBounds(mouseEvent.getX(), mouseEvent.getY())) {
+                inNoteBounds = true;
+                break;
+            }
+        }
+
+        if (inNoteBounds) {
+            if (lastDragLocation != null) {
+                compositionPaneManager.moveSelectedNotes(mouseEvent.getX() - lastDragLocation.x, mouseEvent.getY() - lastDragLocation.y);
+            } else {
+                lastDragLocation = new Coordinates();
+            }
+            lastDragLocation.x = mouseEvent.getX();
+            lastDragLocation.y = mouseEvent.getY();
+        } else {
+
+
+        }
+
+    }
+
+    @FXML
+    public void handleMouseReleased(MouseEvent mouseEvent) {
+        lastDragLocation = null;
     }
 
     /**
@@ -126,4 +158,6 @@ public class Controller {
         this.tempoLine.updateTempoLine(stopTime);
         playMusicAndAnimation();
     }
+
+    class Coordinates { double x, y; }
 }

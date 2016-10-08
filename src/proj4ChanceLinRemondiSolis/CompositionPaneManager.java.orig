@@ -223,6 +223,7 @@ public class CompositionPaneManager {
         return this.notes;
     }
 
+<<<<<<< Updated upstream
     /**
      * Finds a MusicalNote, if one exists, where the mouse click is inside of
      * its rectangle.
@@ -230,10 +231,15 @@ public class CompositionPaneManager {
      * @param x MouseEvent x coordinate
      * @param y MouseEvent y coordinate
      */
+    public void findNoteByMouseClick(double x, double y){
+        for (MusicalNote note: this.notes) {
+            if (note.isInBounds(x, y)){
+=======
     public void findNoteByMouseClick(double x, double y) {
         for (MusicalNote note : this.notes) {
             if (note.isInBounds(x, y)) {
                 selectedNotes.add(note);
+>>>>>>> Stashed changes
                 note.setSelected(true);
                 selectedNotes.add(note);
             }

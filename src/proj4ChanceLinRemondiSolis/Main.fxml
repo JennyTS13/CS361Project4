@@ -33,8 +33,8 @@
         </MenuBar>
     </top>
     <center>
-        <ScrollPane onMouseDragged="#handleMouseDrag" BorderPane.alignment="CENTER">
-            <Pane fx:id="fxCompositionSheet" onMouseClicked="#handleCompositionClick" onMouseDragged="#handleMouseDrag">
+        <ScrollPane onMouseDragged="#handleMouseDrag" onMouseReleased="#handleMouseReleased" BorderPane.alignment="CENTER">
+            <Pane fx:id="fxCompositionSheet" onMouseReleased="#handleMouseReleased" onMouseClicked="#handleCompositionClick" onMouseDragged="#handleMouseDrag">
                 <Line fx:id="fxTempoLine" endY="1280" visible="false" />
             </Pane>
         </ScrollPane>
