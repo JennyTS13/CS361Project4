@@ -213,10 +213,22 @@ public class CompositionPaneManager {
         return false;
     }
 
+    /**
+     * Gets the list of notes.
+     *
+     * @return ArrayList of MusicalNotes
+     */
     public ArrayList<MusicalNote> getNotes(){
         return this.notes;
     }
 
+    /**
+     * Finds a MusicalNote, if one exists, where the mouse click is inside of
+     * its rectangle.
+     *
+     * @param x MouseEvent x coordinate
+     * @param y MouseEvent y coordinate
+     */
     public void findNoteByMouseClick(double x, double y){
         for (MusicalNote note: this.notes) {
             if (note.isInBounds(x, y)){

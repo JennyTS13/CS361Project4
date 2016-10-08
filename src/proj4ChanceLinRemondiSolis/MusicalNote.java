@@ -54,6 +54,14 @@ public class MusicalNote {
         return this.noteBox.getBoundsInParent();
     }
 
+
+    /**
+     * Checks to see if the mouse click is inside of this note's rectangle.
+     *
+     * @param x MouseEvent x coordinate
+     * @param y MouseEvent y coordinate
+     * @return boolean value for whether the click is inside of the rectangle.
+     */
     public boolean isInBounds(double x, double y){
         Bounds bounds = getBounds();
 
