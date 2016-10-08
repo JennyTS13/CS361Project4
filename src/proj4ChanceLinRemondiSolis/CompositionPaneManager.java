@@ -123,6 +123,10 @@ public class CompositionPaneManager {
         }
     }
 
+    public void addNoteToSelectedNotes(MusicalNote note){
+        this.selectedNotes.add(note);
+    }
+
     /**
      * Clears the list of selected notes
      */
@@ -196,6 +200,10 @@ public class CompositionPaneManager {
             }
         }
         return false;
+    }
+
+    public ArrayList<MusicalNote> getNotes(){
+        return this.notes;
     }
 
     /**

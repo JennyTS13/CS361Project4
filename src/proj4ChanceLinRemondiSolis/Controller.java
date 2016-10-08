@@ -8,6 +8,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
+import java.util.ArrayList;
+
 /**
 * Handles all user GUI interactions and coordinates with the MidiPlayer
 * and Composition.
@@ -31,6 +33,16 @@ public class Controller{
         this.compositionPaneManager = new CompositionPaneManager(this.fxCompositionSheet);
         this.tempoLine = new TempoLine(this.fxTempoLine);
         handleInstrumentChange();
+    }
+
+
+    public void handleSelectAll(){
+        this.compositionPaneManager.clearSelectedNotes();
+        ArrayList<MusicalNote> notes = this.compositionPaneManager.getNotes();
+        for (MusicalNote note: notes){
+            note.setSelected(true);
+            this.compositionPaneManager.addNoteToSelectedNotes(note);
+        }
     }
 
     /**

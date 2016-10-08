@@ -24,7 +24,7 @@
                 <MenuItem accelerator="Shortcut+Q" onAction="#handleExit" text="Exit" />
             </Menu>
             <Menu text="Edit">
-                <MenuItem accelerator="Shortcut+A" text="Select All" />
+                <MenuItem accelerator="Shortcut+A" onAction="#handleSelectAll" text="Select All" />
                 <MenuItem accelerator="Shortcut+Delete" onAction="#handleDelete" text="Delete" />
             </Menu>
             <Menu text="Actions">
