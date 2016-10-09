@@ -16,43 +16,66 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 
-<BorderPane prefHeight="300.0" prefWidth="400.0" stylesheets="@Main.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="proj4ChanceLinRemondiSolis.Controller">
+<BorderPane
+        prefHeight="300.0"
+        prefWidth="400.0"
+        stylesheets="@Main.css"
+        xmlns="http://javafx.com/javafx/8.0.65"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="proj4ChanceLinRemondiSolis.Controller">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <Menu text="File">
-                <MenuItem accelerator="Shortcut+Q" onAction="#handleExit" text="Exit" />
+                <MenuItem accelerator="Shortcut+Q" onAction="#handleExit" text="Exit"/>
             </Menu>
             <Menu text="Edit">
-                <MenuItem accelerator="Shortcut+A" onAction="#handleSelectAll" text="Select All" />
-                <MenuItem accelerator="Shortcut+Delete" onAction="#handleDelete" text="Delete" />
+                <MenuItem accelerator="Shortcut+A" onAction="#handleSelectAll" text="Select All"/>
+                <MenuItem accelerator="Shortcut+Delete" onAction="#handleDelete" text="Delete"/>
             </Menu>
             <Menu text="Actions">
-                <MenuItem accelerator="Shortcut+P" onAction="#handlePlayMidi" text="Play" />
-                <MenuItem accelerator="Shortcut+S" onAction="#handleStopMusic" text="Stop" />
+                <MenuItem accelerator="Shortcut+P" onAction="#handlePlayMidi" text="Play"/>
+                <MenuItem accelerator="Shortcut+S" onAction="#handleStopMusic" text="Stop"/>
             </Menu>
         </MenuBar>
     </top>
     <center>
-        <ScrollPane onMouseDragged="#handleMouseDrag" onMouseReleased="#handleMouseReleased" BorderPane.alignment="CENTER">
-            <Pane fx:id="fxCompositionSheet" onMouseReleased="#handleMouseReleased" onMousePressed="#handleMousePressed" onMouseClicked="#handleCompositionClick" onMouseDragged="#handleMouseDrag">
-                <Line fx:id="fxTempoLine" endY="1280" visible="false" />
+        <ScrollPane BorderPane.alignment="CENTER">
+            <Pane fx:id="fxCompositionSheet"
+                  onMouseClicked="#handleCompositionClick"
+                  onMousePressed="#handleMousePressed"
+                  onMouseDragged="#handleMouseDrag"
+                  onMouseReleased="#handleMouseReleased">
+                <Line fx:id="fxTempoLine" endY="1280" visible="false"/>
             </Pane>
         </ScrollPane>
     </center>
     <left>
         <Pane fx:id="instrumentPane">
-            <RadioButton layoutX="10.0" layoutY="10.0" onAction="#handleInstrumentChange" selected="true" text="Piano" textFill="Gray">
+            <RadioButton layoutX="10.0" layoutY="10.0" onAction="#handleInstrumentChange" selected="true" text="Piano"
+                         textFill="Gray">
                 <toggleGroup>
-                    <ToggleGroup fx:id="instrumentGroup" />
+                    <ToggleGroup fx:id="instrumentGroup"/>
                 </toggleGroup>
             </RadioButton>
-            <RadioButton layoutX="10.0" layoutY="50.0" onAction="#handleInstrumentChange" text="Harpsichord" textFill="green" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="90.0" onAction="#handleInstrumentChange" text="Marimba" textFill="blue" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="130.0" onAction="#handleInstrumentChange" text="Organ" textFill="goldenrod" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="170.0" onAction="#handleInstrumentChange" text="Accordion" textFill="magenta" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="210.0" onAction="#handleInstrumentChange" text="Guitar" textFill="deepskyblue" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="250.0" onAction="#handleInstrumentChange" text="Violin" textFill="black" toggleGroup="$instrumentGroup" />
-            <RadioButton layoutX="10.0" layoutY="290.0" onAction="#handleInstrumentChange" text="French Horn" textFill="brown" toggleGroup="$instrumentGroup" />
+            <RadioButton
+                    layoutX="10.0"
+                    layoutY="50.0"
+                    onAction="#handleInstrumentChange"
+                    text="Harpsichord"
+                    textFill="green"
+                    toggleGroup="$instrumentGroup"/>
+            <RadioButton layoutX="10.0" layoutY="90.0" onAction="#handleInstrumentChange" text="Marimba" textFill="blue"
+                         toggleGroup="$instrumentGroup"/>
+            <RadioButton layoutX="10.0" layoutY="130.0" onAction="#handleInstrumentChange" text="Organ"
+                         textFill="goldenrod" toggleGroup="$instrumentGroup"/>
+            <RadioButton layoutX="10.0" layoutY="170.0" onAction="#handleInstrumentChange" text="Accordion"
+                         textFill="magenta" toggleGroup="$instrumentGroup"/>
+            <RadioButton layoutX="10.0" layoutY="210.0" onAction="#handleInstrumentChange" text="Guitar"
+                         textFill="deepskyblue" toggleGroup="$instrumentGroup"/>
+            <RadioButton layoutX="10.0" layoutY="250.0" onAction="#handleInstrumentChange" text="Violin"
+                         textFill="black" toggleGroup="$instrumentGroup"/>
+            <RadioButton layoutX="10.0" layoutY="290.0" onAction="#handleInstrumentChange" text="French Horn"
+                         textFill="brown" toggleGroup="$instrumentGroup"/>
         </Pane>
     </left>
 </BorderPane>

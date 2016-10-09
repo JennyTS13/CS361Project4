@@ -4,30 +4,31 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 /**
-* Handles all user GUI interactions and coordinates with the MidiPlayer
-* and Composition.
-*/
+ * Handles all user GUI interactions and coordinates with the MidiPlayer
+ * and Composition.
+ */
 public class Controller {
 
     private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
 
-    @FXML private Pane fxCompositionSheet;
+    @FXML
+    private Pane fxCompositionSheet;
     private CompositionPaneManager compositionPaneManager;
-    @FXML private Line fxTempoLine;
+    @FXML
+    private Line fxTempoLine;
     private TempoLine tempoLine;
     private Coordinates lastDragLocation = new Coordinates();
 
+    private boolean isDragging;
 
-    @FXML private ToggleGroup instrumentGroup;
+
+    @FXML
+    private ToggleGroup instrumentGroup;
 
     /**
      * Seeds our CompositionPaneManager and TempoLine objects with the
@@ -43,7 +44,7 @@ public class Controller {
     /**
      * Sets all of the notes to be selected and adds them to the selected list.
      */
-    public void handleSelectAll(){
+    public void handleSelectAll() {
         this.compositionPaneManager.selectAllNotes();
     }
 
@@ -73,9 +74,7 @@ public class Controller {
     protected void handleCompositionClick(MouseEvent mouseEvent) {
         if (!mouseEvent.isStillSincePress()) { return; }
         this.handleStopMusic();
-        if (mouseEvent.isControlDown()) {
-            compositionPaneManager.handleControlClickAt(mouseEvent.getX(),mouseEvent.getY());
-        } else {
+        if (!mouseEvent.isControlDown()) {
             compositionPaneManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
         }
     }
@@ -90,15 +89,24 @@ public class Controller {
 
     @FXML
     public void handleMouseDrag(MouseEvent mouseEvent) {
-        compositionPaneManager.handleDragMoved(mouseEvent.getX() - lastDragLocation.x, mouseEvent.getY() - lastDragLocation.y);
+        compositionPaneManager.handleDragMoved(mouseEvent.getX() - lastDragLocation.x,
+                mouseEvent.getY() - lastDragLocation.y);
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
+        this.isDragging = true;
     }
-
 
     @FXML
     public void handleMouseReleased(MouseEvent mouseEvent) {
         compositionPaneManager.handleDragEnded();
+        if (!isDragging) {
+            if (mouseEvent.isControlDown()) {
+                compositionPaneManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());
+            } else {
+                compositionPaneManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
+            }
+        }
+        isDragging = false;
     }
 
     /**
@@ -131,7 +139,6 @@ public class Controller {
         System.exit(0);
     }
 
-
     /**
      * Plays the sounds displayed in the composition.
      */
@@ -140,10 +147,12 @@ public class Controller {
         this.midiPlayer.stop();
         this.midiPlayer.clear();
         this.compositionPaneManager.buildSong(this.midiPlayer);
-        double stopTime =this.compositionPaneManager.calculateStopTime();
+        double stopTime = this.compositionPaneManager.calculateStopTime();
         this.tempoLine.updateTempoLine(stopTime);
         playMusicAndAnimation();
     }
 
-    class Coordinates { double x, y; }
+    class Coordinates {
+        double x, y;
+    }
 }

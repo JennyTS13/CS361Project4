@@ -10,11 +10,7 @@
 
 package proj4ChanceLinRemondiSolis;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -28,12 +24,13 @@ import javafx.scene.shape.Rectangle;
  */
 public class MusicalNote {
 
+    public static final int MINIMUM_WIDTH = 5; // number of ticks and pixels
+
     private Rectangle noteBox;
     private int volume;
     private int channel;
     private int trackIndex;
     private boolean selected;
-
 
     /**
      * Constructor
@@ -47,8 +44,6 @@ public class MusicalNote {
         this.channel = channel;
         this.trackIndex = 0;
         this.setSelected(true);
-
-
     }
 
     /**
@@ -68,26 +63,24 @@ public class MusicalNote {
      * @param y MouseEvent y coordinate
      * @return boolean value for whether the click is inside of the rectangle.
      */
-    public boolean getIsInBounds(double x, double y){
+    public boolean getIsInBounds(double x, double y) {
         Bounds bounds = getBounds();
-
-//        System.out.println("MOUSE X: " + x);
-//        System.out.println("MOUSE Y: " + y);
-//        System.out.println("BOX MAX X: " + bounds.getMaxX());
-//        System.out.println("BOX MAX Y: " + bounds.getMaxY());
-//        System.out.println("BOX Min X: " + bounds.getMinX());
-//        System.out.println("BOX Min Y: " + bounds.getMinY());
-
-
         return (x < bounds.getMaxX() &&
                 y < bounds.getMaxY() &&
                 x > bounds.getMinX() &&
                 y > bounds.getMinY());
     }
 
+    public boolean getIsInRectangleBounds(double xMin, double yMin,
+                                          double xMax, double yMax) {
+        Bounds bounds = getBounds();
+        return ((bounds.getMaxX() < xMax && bounds.getMinX() > xMin) &&
+                (bounds.getMaxY() < yMax && bounds.getMinY() > yMin));
+    }
+
     public boolean getIsOnEdge(double x, double y) {
         Bounds bounds = getBounds();
-        return  y < bounds.getMaxY() &&
+        return y < bounds.getMaxY() &&
                 y > bounds.getMinY() &&
                 ((x <= bounds.getMinX() + 5) && x > bounds.getMinX()) ||
                 ((x >= bounds.getMaxX() - 5) && x < bounds.getMaxX());
@@ -151,13 +144,24 @@ public class MusicalNote {
         setPosition(noteBox.getX() + dx, noteBox.getY() + dy);
     }
 
+    public void roundYLocation() {
+        setPosition(noteBox.getX(), noteBox.getY() - (noteBox.getY() % 10));
+    }
+
     public void resizeRight(double dx) {
-        this.noteBox.setWidth(noteBox.getWidth() + dx);
+        if (noteBox.getWidth() < MINIMUM_WIDTH) {
+            this.noteBox.setWidth(MINIMUM_WIDTH);
+        } else {
+            this.noteBox.setWidth(noteBox.getWidth() + dx);
+        }
     }
 
     public void resizeLeft(double dx) {
-        this.noteBox.setWidth(noteBox.getWidth() - dx);
-        this.noteBox.setX(noteBox.getX() + dx);
+        if (noteBox.getWidth() < MINIMUM_WIDTH) {
+            this.noteBox.setWidth(MINIMUM_WIDTH);
+        } else {
+            this.noteBox.setWidth(noteBox.getWidth() - dx);
+        }
     }
 
     /**

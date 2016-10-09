@@ -40,6 +40,7 @@ public class CompositionPaneManager {
     private Hashtable<Paint, Integer> channelMapping;
     private boolean isMovingNotes;
     private ResizeDirection resizeDirection = ResizeDirection.NONE;
+    private DragBox dragBox;
 
     /**
      * Constructor
@@ -110,7 +111,7 @@ public class CompositionPaneManager {
      * @param xPos the input x position of the note
      * @param yPos the input y position of the note
      */
-    public void addNoteToComposition(double xPos, double yPos) {
+    public MusicalNote addNoteToComposition(double xPos, double yPos) {
         if (yPos >= 0 && yPos < 1280) {
             Rectangle noteBox = new Rectangle(100.0, 10.0);
             if (!getNoteExistsAtCoordinates(xPos, yPos)) {
@@ -122,11 +123,13 @@ public class CompositionPaneManager {
                 MusicalNote note = new MusicalNote(noteBox, getChannelNumber(noteBox.getFill()));
                 this.notes.add(note);
                 selectNote(note);
+                return note;
             }
         }
+        return null;
     }
 
-    public void addNoteToSelectedNotes(MusicalNote note){
+    public void addNoteToSelectedNotes(MusicalNote note) {
         this.selectedNotes.add(note);
     }
 
@@ -190,17 +193,19 @@ public class CompositionPaneManager {
 
     /**
      * Calculates the stop time for the composition created
+     *
      * @return stopTime
      */
-    public double calculateStopTime(){
+    public double calculateStopTime() {
         double stopTime = 0.0;
-        for (MusicalNote note: this.notes){
-            if (stopTime < note.getStartTick() + note.getDuration()){
+        for (MusicalNote note : this.notes) {
+            if (stopTime < note.getStartTick() + note.getDuration()) {
                 stopTime = note.getStartTick() + note.getDuration();
             }
         }
         return stopTime;
     }
+
     /**
      * Checks if note is in composition at the given location
      *
@@ -211,7 +216,7 @@ public class CompositionPaneManager {
     private boolean getNoteExistsAtCoordinates(double xPos, double yPos) {
         if (!this.notes.isEmpty()) {
             for (MusicalNote note : this.notes) {
-                if (note.getIsInBounds(xPos,yPos)) {
+                if (note.getIsInBounds(xPos, yPos)) {
                     return true;
                 }
             }
@@ -224,7 +229,7 @@ public class CompositionPaneManager {
      *
      * @return ArrayList of MusicalNotes
      */
-    public ArrayList<MusicalNote> getNotes(){
+    public ArrayList<MusicalNote> getNotes() {
         return this.notes;
     }
 
@@ -251,19 +256,40 @@ public class CompositionPaneManager {
         }
     }
 
+    public void unselectNote(MusicalNote note){
+        note.setSelected(false);
+        if (selectedNotes.contains(note)) {
+            selectedNotes.remove(note);
+        }
+    }
 
     public void handleDragMoved(double dx, double dy) {
-
         if (isMovingNotes) {
-            moveSelectedNotes(dx,dy);
+            moveSelectedNotes(dx, dy);
         } else if (getIsResizingNotes()) {
             resizeSelectedNotes(dx);
+        } else {
+            this.dragBox.getBox().setWidth(this.dragBox.getBox().getWidth() + dx);
+            this.dragBox.getBox().setHeight(this.dragBox.getBox().getHeight() + dy);
+            Bounds bounds = this.dragBox.getBox().getBoundsInParent();
+            clearSelectedNotes();
+            for (MusicalNote note : notes) {
+                if (note.getIsInRectangleBounds(bounds.getMinX(), bounds.getMinY(),
+                        bounds.getMaxX(), bounds.getMaxY())) {
+                    note.setSelected(true);
+                    if (!selectedNotes.contains(note)) {
+                        selectedNotes.add(note);
+                    }
+                }
+            }
         }
     }
 
     public void handleDragEnded() {
+        releaseSelectedNotes();
         resizeDirection = ResizeDirection.NONE;
         isMovingNotes = false;
+        composition.getChildren().remove(this.dragBox.getBox());
     }
 
     public void handleClickAt(double x, double y) {
@@ -272,20 +298,37 @@ public class CompositionPaneManager {
         if (noteAtClickLocation.isPresent()) {
             selectNote(noteAtClickLocation.get());
         } else {
-            addNoteToComposition(x,y);
+            addNoteToComposition(x, y);
         }
 
     }
 
     public void handleControlClickAt(double x, double y) {
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
+        System.out.println("HERE");
+        // if there is a note at the click location
         if (noteAtClickLocation.isPresent()) {
-            selectNote(noteAtClickLocation.get());
+            System.out.println("HERE1");
+            // if this note is already selected, unselect it
+            if (noteAtClickLocation.get().isSelected()){
+                System.out.println("HERE2");
+                unselectNote(noteAtClickLocation.get());
+            }
+            // if it is not selected, select it
+            else {
+                System.out.println("HERE3");
+                selectNote(noteAtClickLocation.get());
+            }
+        }
+        // add a new note and select it
+        else{
+            System.out.println("HERE4");
+            MusicalNote note = addNoteToComposition(x, y);
+            selectNote(note);
         }
     }
 
     public void handleDragStartedAtLocation(double x, double y) {
-        System.out.println("drag started");
         resizeDirection = ResizeDirection.NONE;
         isMovingNotes = false;
         final boolean onNote = getNoteExistsAtCoordinates(x, y);
@@ -293,13 +336,13 @@ public class CompositionPaneManager {
             boolean onNoteEdge = false;
             for (MusicalNote note : notes) {
 
-                if (note.getIsInBounds(x,y) && !note.isSelected()) {
+                if (note.getIsInBounds(x, y) && !note.isSelected()) {
                     clearSelectedNotes();
                     selectNote(note);
                 }
-                if (note.getIsOnEdge(x,y)) {
+                if (note.getIsOnEdge(x, y)) {
                     onNoteEdge = true;
-                    if (x < note.getBounds().getMinX() + note.getBounds().getWidth()/2) {
+                    if (x < note.getBounds().getMinX() + note.getBounds().getWidth() / 2) {
                         resizeDirection = ResizeDirection.LEFT;
                     } else {
                         resizeDirection = ResizeDirection.RIGHT;
@@ -310,19 +353,34 @@ public class CompositionPaneManager {
             if (!onNoteEdge) {
                 isMovingNotes = true;
             }
+        } else {
+            clearSelectedNotes();
+            Rectangle box = new Rectangle(0, 0);
+            box.setX(x);
+            box.setY(y);
+            box.setFill(Color.color(0.1, 0.1, 0.1, 0));
+            box.getStrokeDashArray().addAll(3.0, 7.0, 3.0, 7.0);
+            box.setStrokeWidth(2);
+            box.setStroke(Color.YELLOW);
+            this.composition.getChildren().add(box);
+            this.dragBox = new DragBox(box);
         }
     }
 
 
-    public  void moveSelectedNotes(double dx, double dy) {
-        System.out.println("moving");
+    public void moveSelectedNotes(double dx, double dy) {
         for (MusicalNote note : selectedNotes) {
-            note.move(dx,dy);
+            note.move(dx, dy);
+        }
+    }
+
+    public void releaseSelectedNotes() {
+        for (MusicalNote note : selectedNotes) {
+            note.roundYLocation();
         }
     }
 
     public void resizeSelectedNotes(double dx) {
-        System.out.println("resizing");
         for (MusicalNote note : selectedNotes) {
             switch (resizeDirection) {
                 case RIGHT:
@@ -343,7 +401,7 @@ public class CompositionPaneManager {
      * @param midiPlayer MIDI sounds player
      */
     private void addProgramChanges(MidiPlayer midiPlayer) {
-        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 0, 0, 0, 0, 0);
+        midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE, 0, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 1, 6, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 2, 12, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 3, 19, 0, 0, 0);
