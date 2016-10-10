@@ -26,7 +26,6 @@ public class TempoLine {
     private Line tempoLine;
     private TranslateTransition tempoAnimation = new TranslateTransition();
 
-
     /**
      * Constructor
      *
