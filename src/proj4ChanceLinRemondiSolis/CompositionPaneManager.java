@@ -31,6 +31,9 @@ import java.util.Optional;
  * @author Mike Remondi
  */
 public class CompositionPaneManager {
+    private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
+    private TempoLine tempoLine;
+
     private Pane composition;
     private ArrayList<MusicalNote> notes;
     private ArrayList<MusicalNote> selectedNotes;
@@ -45,13 +48,14 @@ public class CompositionPaneManager {
      *
      * @param composition Where the rest of the composition sheet lives
      */
-    public CompositionPaneManager(Pane composition) {
+    public CompositionPaneManager(Pane composition, TempoLine line) {
         this.composition = composition;
         this.notes = new ArrayList<>();
         this.selectedNotes = new ArrayList<>();
         this.channelMapping = new Hashtable<>();
         setChannelMapping();
         createCompositionSheet();
+        this.tempoLine = line;
     }
 
     /**
@@ -344,14 +348,20 @@ public class CompositionPaneManager {
      * @param y the y location of the mouse click on the pane
      */
     public void handleClickAt(double x, double y) {
-        clearSelectedNotes();
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
         if (noteAtClickLocation.isPresent()) {
-            selectNote(noteAtClickLocation.get());
+            System.out.println(noteAtClickLocation.get().isSelected());
+            if (noteAtClickLocation.get().isSelected()){
+                return;
+            }
+            else {
+                clearSelectedNotes();
+                selectNote(noteAtClickLocation.get());
+            }
         } else {
+            clearSelectedNotes();
             addNoteToComposition(x, y);
         }
-
     }
 
     /**
@@ -464,6 +474,35 @@ public class CompositionPaneManager {
                     break;
             }
         }
+    }
+
+    /**
+     * Plays the sequence of notes and animates the TempoLine.
+     */
+    public void play(){
+        this.midiPlayer.stop();
+        this.midiPlayer.clear();
+        this.buildSong(this.midiPlayer);
+        double stopTime = this.calculateStopTime();
+        this.tempoLine.updateTempoLine(stopTime);
+        playMusicAndAnimation();
+    }
+
+    /**
+     * Stops the midiPlayer and hides the tempoLine.
+     */
+    public void stop(){
+        this.midiPlayer.stop();
+        this.tempoLine.stopAnimation();
+        this.tempoLine.hideTempoLine();
+    }
+
+    /**
+     * starts the reproduction  of the composition
+     */
+    private void playMusicAndAnimation() {
+        this.tempoLine.playAnimation();
+        this.midiPlayer.play();
     }
 
     /**

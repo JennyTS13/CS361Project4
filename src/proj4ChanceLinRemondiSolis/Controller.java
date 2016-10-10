@@ -20,8 +20,6 @@ import javafx.scene.shape.Line;
  * This class handles all user GUI interactions
  */
 public class Controller {
-    private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
-
     @FXML
     private Pane fxCompositionSheet;
     @FXML
@@ -30,21 +28,17 @@ public class Controller {
     private ToggleGroup instrumentGroup;
 
     private CompositionPaneManager compositionPaneManager;
-    private TempoLine tempoLine;
     private Coordinates lastDragLocation = new Coordinates();
     private boolean isDragging;
-
 
     /**
      * Seeds our CompositionPaneManager and TempoLine objects with the
      * fields from the FXML file after the FXML has been initialized
      */
     public void initialize() {
-        this.compositionPaneManager = new CompositionPaneManager(this.fxCompositionSheet);
-        this.tempoLine = new TempoLine(this.fxTempoLine);
+        this.compositionPaneManager = new CompositionPaneManager(this.fxCompositionSheet, new TempoLine(fxTempoLine));
         handleInstrumentChange();
     }
-
 
     /**
      * Sets all of the notes to be selected and adds them to the selected list.
@@ -134,22 +128,11 @@ public class Controller {
     }
 
     /**
-     * starts the reproduction  of the composition
-     */
-    private void playMusicAndAnimation() {
-        this.tempoLine.playAnimation();
-        this.midiPlayer.play();
-    }
-
-
-    /**
      * Stops the reproduction of the composition
      */
     @FXML
     protected void handleStopMusic() {
-        this.midiPlayer.stop();
-        this.tempoLine.stopAnimation();
-        this.tempoLine.hideTempoLine();
+        this.compositionPaneManager.stop();
     }
 
 
@@ -168,12 +151,7 @@ public class Controller {
      */
     @FXML
     protected void handlePlayMidi() {
-        this.midiPlayer.stop();
-        this.midiPlayer.clear();
-        this.compositionPaneManager.buildSong(this.midiPlayer);
-        double stopTime = this.compositionPaneManager.calculateStopTime();
-        this.tempoLine.updateTempoLine(stopTime);
-        playMusicAndAnimation();
+        this.compositionPaneManager.play();
     }
 
     /**

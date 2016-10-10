@@ -71,18 +71,21 @@ public class MusicalNote {
     /**
      * Checks to see if the note is within the given bounds of a rectangle.
      *
-     * @param xMin the smallest x coordinate of the rectangle
-     * @param yMin the smallest y coordinate of the rectangle
-     * @param xMax the biggest x coordinate of the rectangle
-     * @param yMax the bigget y coordinate of the rectangle
+     * @param rectXMin the smallest x coordinate of the rectangle
+     * @param rectYMin the smallest y coordinate of the rectangle
+     * @param rectXMax the biggest x coordinate of the rectangle
+     * @param rectYMax the bigget y coordinate of the rectangle
      *
      * @return a boolean value indicating whether this note is within the rectangle.
      */
-    public boolean getIsInRectangleBounds(double xMin, double yMin,
-                                          double xMax, double yMax) {
+    public boolean getIsInRectangleBounds(double rectXMin, double rectYMin,
+                                          double rectXMax, double rectYMax) {
         Bounds bounds = getBounds();
-        return ((bounds.getMaxX() < xMax && bounds.getMinX() > xMin) &&
-                (bounds.getMaxY() < yMax && bounds.getMinY() > yMin));
+        boolean xInBounds = (bounds.getMinX() < rectXMax && bounds.getMinX() > rectXMin) ||
+                (bounds.getMaxX() >rectXMin && bounds.getMaxX() < rectXMax);
+        boolean yInBounds = (bounds.getMinY() > rectYMin && bounds.getMinY() < rectYMax ) ||
+                (bounds.getMaxY() > rectYMin && bounds.getMaxY() < rectYMax);
+        return xInBounds && yInBounds;
     }
 
     /**
