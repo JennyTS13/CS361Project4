@@ -65,31 +65,12 @@ public class Controller {
     }
 
     /**
-     * Handles the different Mouse Click actions in the composition
-     *
-     * @param mouseEvent click on the composition
-     */
-    @FXML
-    protected void handleCompositionClick(MouseEvent mouseEvent) {
-        if (!mouseEvent.isStillSincePress()) {
-            return;
-        }
-        this.handleStopMusic();
-        if (!mouseEvent.isControlDown()) {
-            compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
-        }
-    }
-
-    /**
      * Handles the GUI's mousePressed event.
      *
      * @param mouseEvent the GUI's mouseEvent
      */
     @FXML
     public void handleMousePressed(MouseEvent mouseEvent) {
-        if (mouseEvent.isControlDown()) {
-            return;
-        }
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
         compositionManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY());
@@ -127,6 +108,33 @@ public class Controller {
         isDragging = false;
     }
 
+//    /**
+//     * Handles the different Mouse Click actions in the composition
+//     *
+//     * @param mouseEvent click on the composition
+//     */
+//    @FXML
+//    protected void handleCompositionClick(MouseEvent mouseEvent) {
+//        if (!mouseEvent.isStillSincePress()) {
+//            return;
+//        }
+//        this.handleStopMusic();
+//        if (!mouseEvent.isControlDown()) {
+//            compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
+//        }
+//        else{
+//            //compositionManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());
+//        }
+//    }
+
+    /**
+     * Plays the sounds displayed in the composition.
+     */
+    @FXML
+    protected void handlePlayMidi() {
+        this.compositionManager.play();
+    }
+
     /**
      * Stops the reproduction of the composition
      */
@@ -134,7 +142,6 @@ public class Controller {
     protected void handleStopMusic() {
         this.compositionManager.stop();
     }
-
 
     /**
      * Safely exits the program without throwing an error
@@ -144,14 +151,6 @@ public class Controller {
     @FXML
     protected void handleExit(ActionEvent event) {
         System.exit(0);
-    }
-
-    /**
-     * Plays the sounds displayed in the composition.
-     */
-    @FXML
-    protected void handlePlayMidi() {
-        this.compositionManager.play();
     }
 
     /**

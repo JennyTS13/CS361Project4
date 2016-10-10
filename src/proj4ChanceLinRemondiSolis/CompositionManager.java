@@ -350,7 +350,6 @@ public class CompositionManager {
     public void handleClickAt(double x, double y) {
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
         if (noteAtClickLocation.isPresent()) {
-            System.out.println(noteAtClickLocation.get().isSelected());
             if (noteAtClickLocation.get().isSelected()){
                 return;
             }

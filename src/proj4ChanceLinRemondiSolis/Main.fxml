@@ -41,10 +41,11 @@
     <center>
         <ScrollPane BorderPane.alignment="CENTER">
             <Pane fx:id="fxCompositionSheet"
-                  onMouseClicked="#handleCompositionClick"
                   onMousePressed="#handleMousePressed"
                   onMouseDragged="#handleMouseDrag"
                   onMouseReleased="#handleMouseReleased">
+                  <!--onMouseClicked="#handleCompositionClick"-->
+
                 <Line fx:id="fxTempoLine" endY="1280" visible="false"/>
             </Pane>
         </ScrollPane>
