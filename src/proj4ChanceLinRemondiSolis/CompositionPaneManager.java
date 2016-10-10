@@ -129,6 +129,11 @@ public class CompositionPaneManager {
         return null;
     }
 
+    /**
+     * Adds a note to the list of selected notes.
+     *
+     * @param note A MusicalNote to be added to the list.
+     */
     public void addNoteToSelectedNotes(MusicalNote note) {
         this.selectedNotes.add(note);
     }
@@ -143,7 +148,12 @@ public class CompositionPaneManager {
         this.selectedNotes.clear();
     }
 
-    public boolean getIsResizingNotes() {
+    /**
+     * Checks to see if we are resizing our notes.
+     *
+     * @return a boolean indication of whether we are resizing notes.
+     */
+    public boolean isResizingNotes() {
         return resizeDirection != ResizeDirection.NONE;
     }
 
@@ -249,6 +259,23 @@ public class CompositionPaneManager {
         return Optional.empty();
     }
 
+    public void createDragBox(double x, double y){
+        Rectangle box = new Rectangle(0, 0);
+        box.setX(x);
+        box.setY(y);
+        box.setFill(Color.color(0.1, 0.1, 0.1, 0));
+        box.getStrokeDashArray().addAll(3.0, 7.0, 3.0, 7.0);
+        box.setStrokeWidth(2);
+        box.setStroke(Color.YELLOW);
+        this.composition.getChildren().add(box);
+        this.dragBox = new DragBox(box);
+    }
+
+    /**
+     * Sets the given note to selected and adds it to the selectedNotes list.
+     *
+     * @param note A MusicalNote to be selected
+     */
     public void selectNote(MusicalNote note) {
         note.setSelected(true);
         if (!selectedNotes.contains(note)) {
@@ -256,6 +283,11 @@ public class CompositionPaneManager {
         }
     }
 
+    /**
+     * Sets the given note to unselected and removes it from the selectedNotes list.
+     *
+     * @param note
+     */
     public void unselectNote(MusicalNote note){
         note.setSelected(false);
         if (selectedNotes.contains(note)) {
@@ -263,10 +295,20 @@ public class CompositionPaneManager {
         }
     }
 
+    /**
+     * Handles the drag movement of the mouse.
+     *
+     * Responds to mouse drag movement by moving the selected notes,
+     * resizing the selected notes, or creates a DragBox and selects
+     * and unselects the corresponding notes.
+     *
+     * @param dx
+     * @param dy
+     */
     public void handleDragMoved(double dx, double dy) {
         if (isMovingNotes) {
             moveSelectedNotes(dx, dy);
-        } else if (getIsResizingNotes()) {
+        } else if (isResizingNotes()) {
             resizeSelectedNotes(dx);
         } else {
             this.dragBox.getBox().setWidth(this.dragBox.getBox().getWidth() + dx);
@@ -285,13 +327,28 @@ public class CompositionPaneManager {
         }
     }
 
+    /**
+     * Handles the release of the drag motion of the mouse.
+     *
+     * Responds to the end of the drag movement of the mouse by releasing
+     * the moving/resizing notes if there are any and sets all of our
+     * corresponding pieces back to their resting state.
+     */
     public void handleDragEnded() {
-        releaseSelectedNotes();
+        releaseMovedNotes();
         resizeDirection = ResizeDirection.NONE;
         isMovingNotes = false;
         composition.getChildren().remove(this.dragBox.getBox());
     }
 
+    /**
+     * Handles the click of the mouse.
+     *
+     * Responds to the click of the mouse and selects/unselects the appropriate notes.
+     *
+     * @param x the x location of the mouse click on the pane
+     * @param y the y location of the mouse click on the pane
+     */
     public void handleClickAt(double x, double y) {
         clearSelectedNotes();
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
@@ -303,91 +360,110 @@ public class CompositionPaneManager {
 
     }
 
+    /**
+     * Handles the control click of the mouse.
+     *
+     * Responds to the control click of the mouse and selects/unselects
+     * the appropriate notes.
+     *
+     * @param x the x location of the mouse click on the pane
+     * @param y the y location of the mouse click on the pane
+     */
     public void handleControlClickAt(double x, double y) {
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
-        System.out.println("HERE");
         // if there is a note at the click location
         if (noteAtClickLocation.isPresent()) {
-            System.out.println("HERE1");
             // if this note is already selected, unselect it
             if (noteAtClickLocation.get().isSelected()){
-                System.out.println("HERE2");
                 unselectNote(noteAtClickLocation.get());
             }
             // if it is not selected, select it
             else {
-                System.out.println("HERE3");
                 selectNote(noteAtClickLocation.get());
             }
         }
         // add a new note and select it
         else{
-            System.out.println("HERE4");
             MusicalNote note = addNoteToComposition(x, y);
             selectNote(note);
         }
     }
 
+    /**
+     * Handles the start of the drag motion of the mouse.
+     *
+     * Checks if the mouse is on a note, if it is, it checks whether to
+     * move the note(s) or to resize them, if it is not on a note, it creates
+     * a DragBox.
+     *
+     * @param x
+     * @param y
+     */
     public void handleDragStartedAtLocation(double x, double y) {
         resizeDirection = ResizeDirection.NONE;
         isMovingNotes = false;
         final boolean onNote = getNoteExistsAtCoordinates(x, y);
+
+        // if the click is on a note
         if (onNote) {
             boolean onNoteEdge = false;
             for (MusicalNote note : notes) {
-
+                // if it is in the bounds of a note and the note is not selected
                 if (note.getIsInBounds(x, y) && !note.isSelected()) {
                     clearSelectedNotes();
                     selectNote(note);
                 }
+                // if it is on the edge of a note
                 if (note.getIsOnEdge(x, y)) {
                     onNoteEdge = true;
-                    if (x < note.getBounds().getMinX() + note.getBounds().getWidth() / 2) {
-                        resizeDirection = ResizeDirection.LEFT;
-                    } else {
                         resizeDirection = ResizeDirection.RIGHT;
-                    }
                     break;
                 }
             }
+            // if it is not on a note's edge, we are moving notes
             if (!onNoteEdge) {
                 isMovingNotes = true;
             }
-        } else {
+        }
+        // click is not on a note so create a DragBox
+        else {
             clearSelectedNotes();
-            Rectangle box = new Rectangle(0, 0);
-            box.setX(x);
-            box.setY(y);
-            box.setFill(Color.color(0.1, 0.1, 0.1, 0));
-            box.getStrokeDashArray().addAll(3.0, 7.0, 3.0, 7.0);
-            box.setStrokeWidth(2);
-            box.setStroke(Color.YELLOW);
-            this.composition.getChildren().add(box);
-            this.dragBox = new DragBox(box);
+            createDragBox(x, y);
         }
     }
 
-
+    /**
+     * Moves the selected note(s) by the change in mouse movement.
+     *
+     * @param dx the change in the mouse's x coordinate
+     * @param dy the change in the mouse's y coordinate
+     */
     public void moveSelectedNotes(double dx, double dy) {
         for (MusicalNote note : selectedNotes) {
             note.move(dx, dy);
         }
     }
 
-    public void releaseSelectedNotes() {
+    /**
+     * Releases the notes that were being moved and drops them in
+     * the nearest horizontal bar.
+     */
+    public void releaseMovedNotes() {
         for (MusicalNote note : selectedNotes) {
-            note.roundYLocation();
+            note.roundToNearestYLocation();
         }
     }
 
+    /**
+     * Resizes the notes horizontally.
+     *
+     * @param dx the change in the mouse's x coordinate
+     */
     public void resizeSelectedNotes(double dx) {
         for (MusicalNote note : selectedNotes) {
             switch (resizeDirection) {
                 case RIGHT:
                     note.resizeRight(dx);
-                    break;
-                case LEFT:
-                    note.resizeLeft(dx);
                     break;
                 default:
                     break;
@@ -411,7 +487,10 @@ public class CompositionPaneManager {
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 7, 60, 0, 0, 0);
     }
 
+    /**
+     * The possible set of directions to resize a note.
+     */
     private enum ResizeDirection {
-        RIGHT, LEFT, NONE;
+        RIGHT, NONE;
     }
 }

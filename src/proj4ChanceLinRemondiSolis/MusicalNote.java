@@ -24,12 +24,12 @@ import javafx.scene.shape.Rectangle;
  */
 public class MusicalNote {
 
-    public static final int MINIMUM_WIDTH = 5; // number of ticks and pixels
+    public static final int MINIMUM_WIDTH = 5;
+    private static final int VOLUME = 100;
 
     private Rectangle noteBox;
-    private int volume;
     private int channel;
-    private int trackIndex;
+    private int trackIndex = 0;
     private boolean selected;
 
     /**
@@ -40,9 +40,7 @@ public class MusicalNote {
      */
     public MusicalNote(Rectangle newNoteBox, int channel) {
         this.noteBox = newNoteBox;
-        this.volume = 100;
         this.channel = channel;
-        this.trackIndex = 0;
         this.setSelected(true);
     }
 
@@ -71,6 +69,16 @@ public class MusicalNote {
                 y > bounds.getMinY());
     }
 
+    /**
+     * Checks to see if the note is within the given bounds of a rectangle.
+     *
+     * @param xMin the smallest x coordinate of the rectangle
+     * @param yMin the smallest y coordinate of the rectangle
+     * @param xMax the biggest x coordinate of the rectangle
+     * @param yMax the bigget y coordinate of the rectangle
+     *
+     * @return a boolean value indicating whether this note is within the rectangle.
+     */
     public boolean getIsInRectangleBounds(double xMin, double yMin,
                                           double xMax, double yMax) {
         Bounds bounds = getBounds();
@@ -78,11 +86,19 @@ public class MusicalNote {
                 (bounds.getMaxY() < yMax && bounds.getMinY() > yMin));
     }
 
+    /**
+     * Checks whether the coordinates of a mouse click are within 5 pixels
+     * of the right side of the note's rectangle.
+     *
+     * @param x the mouse click's x coordinate
+     * @param y the mouse click's y coordinate
+     *
+     * @return a boolean value indicating whether the mouse click is on the note's edge.
+     */
     public boolean getIsOnEdge(double x, double y) {
         Bounds bounds = getBounds();
         return y < bounds.getMaxY() &&
                 y > bounds.getMinY() &&
-                ((x <= bounds.getMinX() + 5) && x > bounds.getMinX()) ||
                 ((x >= bounds.getMaxX() - 5) && x < bounds.getMaxX());
     }
 
@@ -110,7 +126,7 @@ public class MusicalNote {
      * @return Volume of the note
      */
     public int getVolume() {
-        return this.volume;
+        return this.VOLUME;
     }
 
     /**
@@ -140,27 +156,39 @@ public class MusicalNote {
         return this.channel;
     }
 
+    /**
+     * Moves the note's rectangle to a new position.
+     *
+     * @param dx the change in the x position of the note's rectangle
+     * @param dy the change in the y position of the note's rectangle
+     */
     public void move(double dx, double dy) {
         setPosition(noteBox.getX() + dx, noteBox.getY() + dy);
     }
 
-    public void roundYLocation() {
-        setPosition(noteBox.getX(), noteBox.getY() - (noteBox.getY() % 10));
+    /**
+     * Rounds the y coordinate of the note's rectangle in order to snap to a
+     * space between two horizontal bars.
+     */
+    public void roundToNearestYLocation() {
+        if (noteBox.getY() % 10 < 5){
+            setPosition(noteBox.getX(), noteBox.getY() - (noteBox.getY() % 10));
+        }
+        else{
+            setPosition(noteBox.getX(), noteBox.getY() + (noteBox.getY() % 10));
+        }
     }
 
+    /**
+     * Resizes the note's rectangle in the right direction.
+     *
+     * @param dx the distance to move the right edge
+     */
     public void resizeRight(double dx) {
         if (noteBox.getWidth() < MINIMUM_WIDTH) {
             this.noteBox.setWidth(MINIMUM_WIDTH);
         } else {
             this.noteBox.setWidth(noteBox.getWidth() + dx);
-        }
-    }
-
-    public void resizeLeft(double dx) {
-        if (noteBox.getWidth() < MINIMUM_WIDTH) {
-            this.noteBox.setWidth(MINIMUM_WIDTH);
-        } else {
-            this.noteBox.setWidth(noteBox.getWidth() - dx);
         }
     }
 
@@ -174,6 +202,12 @@ public class MusicalNote {
     }
 
 
+    /**
+     * Moves the note's rectangle to the given coordinates
+     *
+     * @param x the x coordinate to move to
+     * @param y the y coordinate to move to
+     */
     public void setPosition(double x, double y) {
         this.noteBox.setX(x);
         this.noteBox.setY(y);

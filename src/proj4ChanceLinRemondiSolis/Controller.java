@@ -9,26 +9,24 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
 /**
- * Handles all user GUI interactions and coordinates with the MidiPlayer
- * and Composition.
+ * Handles all user GUI interactions and passes the necessary information
+ * to the CompositionPaneManager.
  */
 public class Controller {
-
     private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
 
     @FXML
     private Pane fxCompositionSheet;
-    private CompositionPaneManager compositionPaneManager;
     @FXML
     private Line fxTempoLine;
-    private TempoLine tempoLine;
-    private Coordinates lastDragLocation = new Coordinates();
-
-    private boolean isDragging;
-
-
     @FXML
     private ToggleGroup instrumentGroup;
+
+    private CompositionPaneManager compositionPaneManager;
+    private TempoLine tempoLine;
+    private Coordinates lastDragLocation = new Coordinates();
+    private boolean isDragging;
+
 
     /**
      * Seeds our CompositionPaneManager and TempoLine objects with the
@@ -72,21 +70,35 @@ public class Controller {
      */
     @FXML
     protected void handleCompositionClick(MouseEvent mouseEvent) {
-        if (!mouseEvent.isStillSincePress()) { return; }
+        if (!mouseEvent.isStillSincePress()) {
+            return;
+        }
         this.handleStopMusic();
         if (!mouseEvent.isControlDown()) {
             compositionPaneManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
         }
     }
 
+    /**
+     * Handles the GUI's mousePressed event.
+     *
+     * @param mouseEvent the GUI's mouseEvent
+     */
     @FXML
     public void handleMousePressed(MouseEvent mouseEvent) {
-        if (mouseEvent.isControlDown()) { return; }
+        if (mouseEvent.isControlDown()) {
+            return;
+        }
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
         compositionPaneManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY());
     }
 
+    /**
+     * Handles the GUI's mouseDrag event.
+     *
+     * @param mouseEvent the GUI's mouseEvent
+     */
     @FXML
     public void handleMouseDrag(MouseEvent mouseEvent) {
         compositionPaneManager.handleDragMoved(mouseEvent.getX() - lastDragLocation.x,
@@ -96,6 +108,11 @@ public class Controller {
         this.isDragging = true;
     }
 
+    /**
+     * Handles the GUI's mouseReleased event.
+     *
+     * @param mouseEvent the GUI's mouseEvent
+     */
     @FXML
     public void handleMouseReleased(MouseEvent mouseEvent) {
         compositionPaneManager.handleDragEnded();
@@ -152,7 +169,10 @@ public class Controller {
         playMusicAndAnimation();
     }
 
-    class Coordinates {
+    /**
+     * A class that has two fields: the x and y coordinates.
+     */
+    private class Coordinates {
         double x, y;
     }
 }
