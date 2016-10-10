@@ -27,6 +27,13 @@ import java.io.IOException;
 public class Main extends Application {
 
     /**
+     * Launches application.
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    /**
      * Sets up the main GUI to play a scale.
      * Player contains a menu bar:
      * File menu: exit option
@@ -49,12 +56,5 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 800, 500));
         primaryStage.setOnCloseRequest(event -> System.exit(0));
         primaryStage.show();
-    }
-
-    /**
-     * Launches application.
-     */
-    public static void main(String[] args) {
-        launch(args);
     }
 }

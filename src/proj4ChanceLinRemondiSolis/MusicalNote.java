@@ -22,6 +22,14 @@ import javafx.scene.shape.Rectangle;
  */
 public class MusicalNote {
 
+    /******************************************************************************************************
+     *                                                                                                    *
+     *                                         Fields                                                     *
+     *                                       Constructor                                                  *
+     *                                                                                                    *
+     ******************************************************************************************************/
+
+
     /**
      * The minimum width a note can be.
      */
@@ -66,6 +74,22 @@ public class MusicalNote {
         this.setSelected(true);
     }
 
+    /******************************************************************************************************
+     *                                                                                                    *
+     *                                      Accessor Methods                                              *
+     *                                                                                                    *
+     ******************************************************************************************************/
+
+    /**
+     * Accessor method for if a note is selected or not
+     *
+     * @return Whether or not the note is selected
+     */
+    public boolean isSelected() {
+        return this.selected;
+    }
+
+
     /**
      * Accessor method for the bounds of the note in the compositon
      *
@@ -98,15 +122,14 @@ public class MusicalNote {
      * @param rectYMin the smallest y coordinate of the rectangle
      * @param rectXMax the biggest x coordinate of the rectangle
      * @param rectYMax the bigget y coordinate of the rectangle
-     *
      * @return a boolean value indicating whether this note is within the rectangle.
      */
     public boolean getIsInRectangleBounds(double rectXMin, double rectYMin,
                                           double rectXMax, double rectYMax) {
         Bounds bounds = getBounds();
         boolean xInBounds = (bounds.getMinX() < rectXMax && bounds.getMinX() > rectXMin) ||
-                (bounds.getMaxX() >rectXMin && bounds.getMaxX() < rectXMax);
-        boolean yInBounds = (bounds.getMinY() > rectYMin && bounds.getMinY() < rectYMax ) ||
+                (bounds.getMaxX() > rectXMin && bounds.getMaxX() < rectXMax);
+        boolean yInBounds = (bounds.getMinY() > rectYMin && bounds.getMinY() < rectYMax) ||
                 (bounds.getMaxY() > rectYMin && bounds.getMaxY() < rectYMax);
         return xInBounds && yInBounds;
     }
@@ -117,7 +140,6 @@ public class MusicalNote {
      *
      * @param x the mouse click's x coordinate
      * @param y the mouse click's y coordinate
-     *
      * @return a boolean value indicating whether the mouse click is on the note's edge.
      */
     public boolean getIsOnEdge(double x, double y) {
@@ -182,14 +204,29 @@ public class MusicalNote {
     }
 
     /**
+     * Accessor method for track number
+     *
+     * @return Track for the note
+     */
+    public int getTrackIndex() {
+        return this.trackIndex;
+    }
+
+    /******************************************************************************************************
+     *                                                                                                    *
+     *                                  Manipulation methods                                              *
+     *                                                                                                    *
+     ******************************************************************************************************/
+
+
+    /**
      * Rounds the y coordinate of the note's rectangle in order to snap to a
      * space between two horizontal bars.
      */
     public void roundToNearestYLocation() {
-        if (noteBox.getY() % 10 < 5){
+        if (noteBox.getY() % 10 < 5) {
             setPosition(noteBox.getX(), noteBox.getY() - (noteBox.getY() % 10));
-        }
-        else{
+        } else {
             setPosition(noteBox.getX(), noteBox.getY() + (10 - (noteBox.getY() % 10)));
         }
     }
@@ -207,15 +244,6 @@ public class MusicalNote {
         }
     }
 
-    /**
-     * Accessor method for track number
-     *
-     * @return Track for the note
-     */
-    public int getTrackIndex() {
-        return this.trackIndex;
-    }
-
 
     /**
      * Moves the note's rectangle to the given coordinates
@@ -226,16 +254,6 @@ public class MusicalNote {
     public void setPosition(double x, double y) {
         this.noteBox.setX(x);
         this.noteBox.setY(y);
-    }
-
-
-    /**
-     * Accessor method for if a note is selected or not
-     *
-     * @return Whether or not the note is selected
-     */
-    public boolean isSelected() {
-        return this.selected;
     }
 
     /**

@@ -23,8 +23,24 @@ import javafx.util.Duration;
  */
 
 public class TempoLine {
+
+    /******************************************************************************************************
+     *                                                                                                    *
+     *                                         Fields                                                     *
+     *                                      Constructor                                                   *
+     *                                                                                                    *
+     ******************************************************************************************************/
+
+
+    /**
+     * Holds the fxml injected line
+     */
     private Line tempoLine;
-    private TranslateTransition tempoAnimation = new TranslateTransition();
+
+    /**
+     * Holds a translate animation
+     */
+    private TranslateTransition tempoAnimation;
 
     /**
      * Constructor
@@ -32,11 +48,19 @@ public class TempoLine {
      * @param tempoLine graphic representation of reproduction time
      */
     public TempoLine(Line tempoLine) {
+        this.tempoAnimation = new TranslateTransition();
         this.tempoLine = tempoLine;
         this.tempoAnimation.setNode(this.tempoLine);
         this.tempoAnimation.setInterpolator(Interpolator.LINEAR); // Don't ease
         this.tempoAnimation.setOnFinished(event -> hideTempoLine());
     }
+
+    /******************************************************************************************************
+     *                                                                                                    *
+     *                                         Methods                                                    *
+     *                                                                                                    *
+     ******************************************************************************************************/
+
 
     /**
      * if there is a tempo line in the composition pane, remove it.

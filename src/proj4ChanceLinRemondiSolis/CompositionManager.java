@@ -32,24 +32,79 @@ import java.util.Optional;
  */
 public class CompositionManager {
 
-    private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
+    /**************************************************************************
+     *                                                                        *
+     *                              Fields                                    *
+     *                                                                        *
+     **************************************************************************/
+
+    /**
+     * Midi Sound Player
+     */
+    private MidiPlayer midiPlayer;
+
+    /**
+     * Graphic presentation of progress
+     */
     private TempoLine tempoLine;
 
+    /**
+     * Composition pane to add the notes
+     */
     private Pane composition;
+
+    /**
+     * Holds an array of the notes in the composition
+     */
     private ArrayList<MusicalNote> notes;
+
+    /**
+     * Holds an array of the selected notes in the composition
+     */
     private ArrayList<MusicalNote> selectedNotes;
+
+    /**
+     * Reference to the instrument color associated with the instrument
+     */
     private Paint instrumentColor;
+
+    /**
+     * Maps the instrument color to the channel number
+     */
     private Hashtable<Paint, Integer> channelMapping;
+
+    /**
+     * Indicates if the notes are moving
+     */
     private boolean isMovingNotes;
+
+    /**
+     * Indicates if the notes are resizing
+     */
     private boolean isResizing;
+
+    /**
+     * Holds the Rectangle fro the dragging box that selects
+     */
     private Rectangle dragBox;
+
+
+    /**************************************************************************
+     *                                                                        *
+     *                              Constructor                               *
+     *                    Handlers for composition sheet                      *
+     *                                                                        *
+     **************************************************************************/
+
 
     /**
      * Constructor
      *
-     * @param composition Where the rest of the composition sheet lives
+     * @param composition pane to act like composition sheet
+     * @param line graphic representation of progress
      */
     public CompositionManager(Pane composition, TempoLine line) {
+        this.midiPlayer = new MidiPlayer(100, 60);
         this.composition = composition;
         this.notes = new ArrayList<>();
         this.selectedNotes = new ArrayList<>();
@@ -57,40 +112,6 @@ public class CompositionManager {
         setChannelMapping();
         createCompositionSheet();
         this.tempoLine = line;
-    }
-
-    /**
-     * Maps channel numbers to specific instrument color association
-     */
-    public void setChannelMapping() {
-        this.channelMapping.put(Color.GRAY, 0);
-        this.channelMapping.put(Color.GREEN, 1);
-        this.channelMapping.put(Color.BLUE, 2);
-        this.channelMapping.put(Color.GOLDENROD, 3);
-        this.channelMapping.put(Color.MAGENTA, 4);
-        this.channelMapping.put(Color.DEEPSKYBLUE, 5);
-        this.channelMapping.put(Color.BLACK, 6);
-        this.channelMapping.put(Color.BROWN, 7);
-    }
-
-    /**
-     * Updates the current color associated with an instrument
-     *
-     * @param newInstrumentColor new color associated with new instrument
-     */
-    public void changeInstrument(Paint newInstrumentColor) {
-        this.instrumentColor = newInstrumentColor;
-    }
-
-    /**
-     * Retrieves the channel number associated with the color of
-     * the current instrument
-     *
-     * @param instrumentColor Text color of the instrument
-     * @return Channel number which corresponds to the insturment color
-     */
-    public int getChannelNumber(Paint instrumentColor) {
-        return this.channelMapping.get(instrumentColor);
     }
 
     /**
@@ -113,10 +134,9 @@ public class CompositionManager {
      *
      * @param xPos the input x position of the note
      * @param yPos the input y position of the note
-     *
      * @return the note added
      */
-    public MusicalNote addNoteToComposition(double xPos, double yPos) {
+    public Optional<MusicalNote> addNoteToComposition(double xPos, double yPos) {
         if (yPos >= 0 && yPos < 1280) {
             Rectangle noteBox = new Rectangle(100.0, 10.0);
             if (!getNoteExistsAtCoordinates(xPos, yPos)) {
@@ -128,10 +148,10 @@ public class CompositionManager {
                 MusicalNote note = new MusicalNote(noteBox, getChannelNumber(noteBox.getFill()));
                 this.notes.add(note);
                 selectNote(note);
-                return note;
+                return Optional.of(note);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -164,52 +184,13 @@ public class CompositionManager {
         this.selectedNotes.clear();
     }
 
-    /**
-     * Adds the note to the sound player
-     *
-     * @param midiPlayer MIDI sound player
-     */
-    public void buildSong(MidiPlayer midiPlayer) {
-        addProgramChanges(midiPlayer);
-        double stopTime = 0.0;
-        for (MusicalNote note : this.notes) {
-            midiPlayer.addNote(
-                    note.getPitch(),            //pitch
-                    note.getVolume(),          //volume
-                    note.getStartTick(),      //startTick
-                    note.getDuration(),      //duration
-                    note.getChannel(),      //channel
-                    note.getTrackIndex()   //trackIndex
-            );
-        }
-    }
 
-    /**
-     * Selects all of the notes and adds them to the selected arraylist.
-     */
-    public void selectAllNotes() {
-        this.clearSelectedNotes();
-        ArrayList<MusicalNote> notes = this.getNotes();
-        for (MusicalNote note : notes) {
-            note.setSelected(true);
-            this.addNoteToSelectedNotes(note);
-        }
-    }
+    /**************************************************************************
+     *                                                                        *
+     *                       Getters for Note object                          *
+     *                                                                        *
+     **************************************************************************/
 
-    /**
-     * Calculates the stop time for the composition created
-     *
-     * @return stopTime
-     */
-    public double calculateStopTime() {
-        double stopTime = 0.0;
-        for (MusicalNote note : this.notes) {
-            if (stopTime < note.getStartTick() + note.getDuration()) {
-                stopTime = note.getStartTick() + note.getDuration();
-            }
-        }
-        return stopTime;
-    }
 
     /**
      * Checks if note is in composition at the given location
@@ -254,7 +235,20 @@ public class CompositionManager {
         return Optional.empty();
     }
 
-    public void createDragBox(double x, double y){
+    /**************************************************************************
+     *                                                                        *
+     *                      Commands for note movement                        *
+     *                                                                        *
+     **************************************************************************/
+
+
+
+    /**
+     * Creates a box that will be used to select multiple notes
+     * @param x  start position in x axis
+     * @param y start position in y axis
+     */
+    public void createDragBox(double x, double y) {
         this.dragBox = new Rectangle(0, 0);
         this.dragBox.setX(x);
         this.dragBox.setY(y);
@@ -275,24 +269,78 @@ public class CompositionManager {
     }
 
     /**
+     * Selects all of the notes and adds them to the selected arraylist.
+     */
+    public void selectAllNotes() {
+        this.clearSelectedNotes();
+        ArrayList<MusicalNote> notes = this.getNotes();
+        for (MusicalNote note : notes) {
+            note.setSelected(true);
+            this.addNoteToSelectedNotes(note);
+        }
+    }
+
+    /**
      * Sets the given note to unselected and removes it from the selectedNotes list.
      *
      * @param note
      */
-    public void unselectNote(MusicalNote note){
+    public void unselectNote(MusicalNote note) {
         note.setSelected(false);
         selectedNotes.remove(note);
     }
 
+
     /**
-     * Handles the drag movement of the mouse.
+     * Moves the selected note(s) by the change in mouse movement.
+     *
+     * @param dx the change in the mouse's x coordinate
+     * @param dy the change in the mouse's y coordinate
+     */
+    public void moveSelectedNotes(double dx, double dy) {
+        for (MusicalNote note : selectedNotes) {
+            Rectangle noteBox = note.getNoteBox();
+            note.setPosition(noteBox.getX() + dx, noteBox.getY() + dy);
+        }
+    }
+
+    /**
+     * Releases the notes that were being moved and drops them in
+     * the nearest horizontal bar.
+     */
+    public void releaseMovedNotes() {
+        for (MusicalNote note : selectedNotes) {
+            note.roundToNearestYLocation();
+        }
+    }
+
+    /**
+     * Resizes the notes horizontally.
+     *
+     * @param dx the change in the mouse's x coordinate
+     */
+    public void resizeSelectedNotes(double dx) {
+        for (MusicalNote note : selectedNotes) {
+            note.resizeRight(dx);
+        }
+    }
+
+    /**************************************************************************
+     *                                                                        *
+     *                       Handlers for note movement                       *
+     *                                                                        *
+     **************************************************************************/
+
+
+    /**
+     * * Handles the drag movement of the mouse.
      *
      * Responds to mouse drag movement by moving the selected notes,
      * resizing the selected notes, or creates a DragBox and selects
      * and unselects the corresponding notes.
-     *
-     * @param dx
-     * @param dy
+     * @param dx position of click in x axis
+     * @param dy position of click in y axis
+     * @param controlDrag if control-down
      */
     public void handleDragMoved(double dx, double dy, boolean controlDrag) {
         if (isMovingNotes) {
@@ -300,7 +348,7 @@ public class CompositionManager {
         } else if (isResizing) {
             resizeSelectedNotes(dx);
         } else {
-            if (!controlDrag){
+            if (!controlDrag) {
                 clearSelectedNotes();
             }
             this.dragBox.setWidth(this.dragBox.getWidth() + dx);
@@ -349,7 +397,7 @@ public class CompositionManager {
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
         clearSelectedNotes();
         if (noteAtClickLocation.isPresent()) {
-            if (!noteAtClickLocation.get().isSelected()){
+            if (!noteAtClickLocation.get().isSelected()) {
                 selectNote(noteAtClickLocation.get());
             }
         } else {
@@ -371,7 +419,7 @@ public class CompositionManager {
         // if there is a note at the click location
         if (noteAtClickLocation.isPresent()) {
             // if this note is already selected, unselect it
-            if (noteAtClickLocation.get().isSelected()){
+            if (noteAtClickLocation.get().isSelected()) {
                 unselectNote(noteAtClickLocation.get());
             }
             // if it is not selected, select it
@@ -380,9 +428,11 @@ public class CompositionManager {
             }
         }
         // add a new note and select it
-        else{
-            MusicalNote note = addNoteToComposition(x, y);
-            selectNote(note);
+        else {
+            Optional<MusicalNote> note = addNoteToComposition(x, y);
+            if (note.isPresent()) {
+                selectNote(note.get());
+            }
         }
     }
 
@@ -393,11 +443,14 @@ public class CompositionManager {
      * move the note(s) or to resize them, if it is not on a note, it creates
      * a DragBox.
      *
-     * @param x
-     * @param y
+     * @param x position at x axis
+     * @param y position at y axis
+     * @param controlDrag if control-down is pressed
      */
     public void handleDragStartedAtLocation(double x, double y, boolean controlDrag) {
-        if (controlDrag) { return; }
+        if (controlDrag) {
+            return;
+        }
         isResizing = false;
         isMovingNotes = false;
         Optional<MusicalNote> optionalNote = getNoteAtMouseClick(x, y);
@@ -426,67 +479,24 @@ public class CompositionManager {
         }
     }
 
-    /**
-     * Moves the selected note(s) by the change in mouse movement.
-     *
-     * @param dx the change in the mouse's x coordinate
-     * @param dy the change in the mouse's y coordinate
-     */
-    public void moveSelectedNotes(double dx, double dy) {
-        for (MusicalNote note : selectedNotes) {
-            Rectangle noteBox = note.getNoteBox();
-            note.setPosition(noteBox.getX() + dx, noteBox.getY() + dy);
-        }
-    }
+    /**************************************************************************
+     *                                                                        *
+     *             Music reproduction handling methods                        *
+     *                                                                        *
+     **************************************************************************/
 
     /**
-     * Releases the notes that were being moved and drops them in
-     * the nearest horizontal bar.
+     * Maps channel numbers to specific instrument color association
      */
-    public void releaseMovedNotes() {
-        for (MusicalNote note : selectedNotes) {
-            note.roundToNearestYLocation();
-        }
-    }
-
-    /**
-     * Resizes the notes horizontally.
-     *
-     * @param dx the change in the mouse's x coordinate
-     */
-    public void resizeSelectedNotes(double dx) {
-        for (MusicalNote note : selectedNotes) {
-            note.resizeRight(dx);
-        }
-    }
-
-    /**
-     * Plays the sequence of notes and animates the TempoLine.
-     */
-    public void play(){
-        this.midiPlayer.stop();
-        this.midiPlayer.clear();
-        this.buildSong(this.midiPlayer);
-        double stopTime = this.calculateStopTime();
-        this.tempoLine.updateTempoLine(stopTime);
-        playMusicAndAnimation();
-    }
-
-    /**
-     * Stops the midiPlayer and hides the tempoLine.
-     */
-    public void stop(){
-        this.midiPlayer.stop();
-        this.tempoLine.stopAnimation();
-        this.tempoLine.hideTempoLine();
-    }
-
-    /**
-     * starts the reproduction  of the composition
-     */
-    private void playMusicAndAnimation() {
-        this.tempoLine.playAnimation();
-        this.midiPlayer.play();
+    public void setChannelMapping() {
+        this.channelMapping.put(Color.GRAY, 0);
+        this.channelMapping.put(Color.GREEN, 1);
+        this.channelMapping.put(Color.BLUE, 2);
+        this.channelMapping.put(Color.GOLDENROD, 3);
+        this.channelMapping.put(Color.MAGENTA, 4);
+        this.channelMapping.put(Color.DEEPSKYBLUE, 5);
+        this.channelMapping.put(Color.BLACK, 6);
+        this.channelMapping.put(Color.BROWN, 7);
     }
 
     /**
@@ -505,10 +515,90 @@ public class CompositionManager {
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 7, 60, 0, 0, 0);
     }
 
+
     /**
-     * The possible set of directions to resize a note.
+     * Updates the current color associated with an instrument
+     *
+     * @param newInstrumentColor new color associated with new instrument
      */
-    private enum ResizeDirection {
-        RIGHT, NONE;
+    public void changeInstrument(Paint newInstrumentColor) {
+        this.instrumentColor = newInstrumentColor;
     }
+
+    /**
+     * Retrieves the channel number associated with the color of
+     * the current instrument
+     *
+     * @param instrumentColor Text color of the instrument
+     * @return Channel number which corresponds to the insturment color
+     */
+    public int getChannelNumber(Paint instrumentColor) {
+        return this.channelMapping.get(instrumentColor);
+    }
+
+    /**
+     * Adds the note to the sound player
+     *
+     * @param midiPlayer MIDI sound player
+     */
+    public void buildSong(MidiPlayer midiPlayer) {
+        addProgramChanges(midiPlayer);
+        double stopTime = 0.0;
+        for (MusicalNote note : this.notes) {
+            midiPlayer.addNote(
+                    note.getPitch(),            //pitch
+                    note.getVolume(),          //volume
+                    note.getStartTick(),      //startTick
+                    note.getDuration(),      //duration
+                    note.getChannel(),      //channel
+                    note.getTrackIndex()   //trackIndex
+            );
+        }
+    }
+
+    /**
+     * Calculates the stop time for the composition created
+     *
+     * @return stopTime
+     */
+    public double calculateStopTime() {
+        double stopTime = 0.0;
+        for (MusicalNote note : this.notes) {
+            if (stopTime < note.getStartTick() + note.getDuration()) {
+                stopTime = note.getStartTick() + note.getDuration();
+            }
+        }
+        return stopTime;
+    }
+
+    /**
+     * Plays the sequence of notes and animates the TempoLine.
+     */
+    public void play() {
+        this.midiPlayer.stop();
+        this.midiPlayer.clear();
+        this.buildSong(this.midiPlayer);
+        double stopTime = this.calculateStopTime();
+        this.tempoLine.updateTempoLine(stopTime);
+        playMusicAndAnimation();
+    }
+
+    /**
+     * Stops the midiPlayer and hides the tempoLine.
+     */
+    public void stop() {
+        this.midiPlayer.stop();
+        this.tempoLine.stopAnimation();
+        this.tempoLine.hideTempoLine();
+    }
+
+    /**
+     * starts the reproduction  of the composition
+     */
+    private void playMusicAndAnimation() {
+        this.tempoLine.playAnimation();
+        this.midiPlayer.play();
+    }
+
+
 }

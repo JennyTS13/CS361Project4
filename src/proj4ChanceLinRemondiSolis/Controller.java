@@ -20,15 +20,45 @@ import javafx.scene.shape.Line;
  * This class handles all user GUI interactions
  */
 public class Controller {
+
+
+    /******************************************************************************************************
+     *                                                                                                    *
+     *                                  Fields & Initializer                                              *
+     *                                                                                                    *
+     ******************************************************************************************************/
+
+    /**
+     * Holds the fxml injected composition pane
+     */
     @FXML
     private Pane fxCompositionSheet;
+
+    /**
+     * Holds the fxml injected of the TempoLine
+     */
     @FXML
     private Line fxTempoLine;
+
+    /**
+     * Holds the fxml injected instrument group
+     */
     @FXML
     private ToggleGroup instrumentGroup;
 
+    /**
+     * Holds the compositionManager class
+     */
     private CompositionManager compositionManager;
-    private Coordinates lastDragLocation = new Coordinates();
+
+    /**
+     * Holds the coordinates of the last dragged location
+     */
+    private Coordinates lastDragLocation;
+
+    /**
+     * Holds whether the note is being dragged
+     */
     private boolean isDragging;
 
     /**
@@ -36,9 +66,17 @@ public class Controller {
      * fields from the FXML file after the FXML has been initialized
      */
     public void initialize() {
+        this.lastDragLocation = new Coordinates();
         this.compositionManager = new CompositionManager(this.fxCompositionSheet, new TempoLine(fxTempoLine));
         handleInstrumentChange();
     }
+
+
+    /******************************************************************************************************
+     *                                                                                                    *
+     *                         Methods for note movement and manipulation                                 *
+     *                                                                                                    *
+     ******************************************************************************************************/
 
     /**
      * Sets all of the notes to be selected and adds them to the selected list.
@@ -109,6 +147,20 @@ public class Controller {
     }
 
     /**
+     * A class that has two fields: the x and y coordinates.
+     */
+    private class Coordinates {
+        double x, y;
+    }
+
+    /******************************************************************************************************
+     *                                                                                                    *
+     *                          Music reproduction handling methods                                       *
+     *                                                                                                    *
+     ******************************************************************************************************/
+
+
+    /**
      * Plays the sounds displayed in the composition.
      */
     @FXML
@@ -134,10 +186,4 @@ public class Controller {
         System.exit(0);
     }
 
-    /**
-     * A class that has two fields: the x and y coordinates.
-     */
-    private class Coordinates {
-        double x, y;
-    }
 }

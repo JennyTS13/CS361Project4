@@ -113,6 +113,14 @@ public class MidiPlayer {
         sequencer.start();
     }
 
+
+    /**
+     * New method
+     *
+     * Indicates whether the music is being played
+     *
+     * @return if is playing or not
+     */
     public boolean getIsPlaying() {
         return sequencer.isRunning();
     }
