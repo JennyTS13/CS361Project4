@@ -22,13 +22,36 @@ import javafx.scene.shape.Rectangle;
  */
 public class MusicalNote {
 
+    /**
+     * The minimum width a note can be.
+     */
     private static final int MINIMUM_WIDTH = 5;
+
+    /**
+     * The audio volume of the note.
+     */
     private static final int VOLUME = 100;
 
+    /**
+     * The rectangle representing the note visually.
+     */
     private Rectangle noteBox;
+
+    /**
+     * The instrument for the note.
+     */
     private int channel;
+
+    /**
+     * The track index of the note.
+     */
     private int trackIndex;
+
+    /**
+     * Whether the note is currently selected.
+     */
     private boolean selected;
+
 
     /**
      * Constructor
