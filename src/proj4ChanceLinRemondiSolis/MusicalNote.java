@@ -156,16 +156,6 @@ public class MusicalNote {
     }
 
     /**
-     * Moves the note's rectangle to a new position.
-     *
-     * @param dx the change in the x position of the note's rectangle
-     * @param dy the change in the y position of the note's rectangle
-     */
-    public void move(double dx, double dy) {
-        setPosition(noteBox.getX() + dx, noteBox.getY() + dy);
-    }
-
-    /**
      * Rounds the y coordinate of the note's rectangle in order to snap to a
      * space between two horizontal bars.
      */

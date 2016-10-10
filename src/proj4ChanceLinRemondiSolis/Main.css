@@ -15,6 +15,13 @@
     -fx-stroke-type: INSIDE;
 }
 
+.dragBox {
+    -fx-stroke: goldenrod;
+    -fx-stroke-width: 2;
+    -fx-fill: rgba(0.1, 0.1, 0.1, 0);
+    -fx-stroke-dash-array: 3 7 3 7;
+}
+
 #fxCompositionSheet {
     -fx-pref-height: 1280.0;
     -fx-pref-width: 2000.0;

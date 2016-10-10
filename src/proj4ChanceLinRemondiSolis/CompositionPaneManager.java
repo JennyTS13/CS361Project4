@@ -38,7 +38,7 @@ public class CompositionPaneManager {
     private Hashtable<Paint, Integer> channelMapping;
     private boolean isMovingNotes;
     private ResizeDirection resizeDirection = ResizeDirection.NONE;
-    private DragBox dragBox;
+    private Rectangle dragBox;
 
     /**
      * Constructor
@@ -258,15 +258,11 @@ public class CompositionPaneManager {
     }
 
     public void createDragBox(double x, double y){
-        Rectangle box = new Rectangle(0, 0);
-        box.setX(x);
-        box.setY(y);
-        box.setFill(Color.color(0.1, 0.1, 0.1, 0));
-        box.getStrokeDashArray().addAll(3.0, 7.0, 3.0, 7.0);
-        box.setStrokeWidth(2);
-        box.setStroke(Color.YELLOW);
-        this.composition.getChildren().add(box);
-        this.dragBox = new DragBox(box);
+        this.dragBox = new Rectangle(0, 0);
+        this.dragBox.setX(x);
+        this.dragBox.setY(y);
+        this.dragBox.getStyleClass().add("dragBox");
+        this.composition.getChildren().add(this.dragBox);
     }
 
     /**
@@ -309,9 +305,9 @@ public class CompositionPaneManager {
         } else if (isResizingNotes()) {
             resizeSelectedNotes(dx);
         } else {
-            this.dragBox.getBox().setWidth(this.dragBox.getBox().getWidth() + dx);
-            this.dragBox.getBox().setHeight(this.dragBox.getBox().getHeight() + dy);
-            Bounds bounds = this.dragBox.getBox().getBoundsInParent();
+            this.dragBox.setWidth(this.dragBox.getWidth() + dx);
+            this.dragBox.setHeight(this.dragBox.getHeight() + dy);
+            Bounds bounds = this.dragBox.getBoundsInParent();
             clearSelectedNotes();
             for (MusicalNote note : notes) {
                 if (note.getIsInRectangleBounds(bounds.getMinX(), bounds.getMinY(),
@@ -336,7 +332,7 @@ public class CompositionPaneManager {
         releaseMovedNotes();
         resizeDirection = ResizeDirection.NONE;
         isMovingNotes = false;
-        composition.getChildren().remove(this.dragBox.getBox());
+        composition.getChildren().remove(this.dragBox);
     }
 
     /**
@@ -438,7 +434,8 @@ public class CompositionPaneManager {
      */
     public void moveSelectedNotes(double dx, double dy) {
         for (MusicalNote note : selectedNotes) {
-            note.move(dx, dy);
+            Rectangle noteBox = note.getNoteBox();
+            note.setPosition(noteBox.getX() + dx, noteBox.getY() + dy);
         }
     }
 
