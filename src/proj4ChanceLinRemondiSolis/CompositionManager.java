@@ -341,6 +341,11 @@ public class CompositionManager {
      * @param y the y location of the mouse click on the pane
      */
     public void handleClickAt(double x, double y) {
+        if (midiPlayer.getIsPlaying()) {
+            stop();
+            return;
+        }
+
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
         clearSelectedNotes();
         if (noteAtClickLocation.isPresent()) {
