@@ -1,5 +1,5 @@
 /*
- * File: CompositionPaneManager.java
+ * File: CompositionManager.java
  * Names: Graham Chance, Jenny Lin, Ana Sofia Solis Canales, Mike Remondi
  * Class: CS361
  * Project: 4
@@ -30,7 +30,7 @@ import java.util.Optional;
  * @author Ana Sofia Solis Canales
  * @author Mike Remondi
  */
-public class CompositionPaneManager {
+public class CompositionManager {
     private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
     private TempoLine tempoLine;
 
@@ -48,7 +48,7 @@ public class CompositionPaneManager {
      *
      * @param composition Where the rest of the composition sheet lives
      */
-    public CompositionPaneManager(Pane composition, TempoLine line) {
+    public CompositionManager(Pane composition, TempoLine line) {
         this.composition = composition;
         this.notes = new ArrayList<>();
         this.selectedNotes = new ArrayList<>();

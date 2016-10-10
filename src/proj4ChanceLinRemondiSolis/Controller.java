@@ -27,7 +27,7 @@ public class Controller {
     @FXML
     private ToggleGroup instrumentGroup;
 
-    private CompositionPaneManager compositionPaneManager;
+    private CompositionManager compositionManager;
     private Coordinates lastDragLocation = new Coordinates();
     private boolean isDragging;
 
@@ -36,7 +36,7 @@ public class Controller {
      * fields from the FXML file after the FXML has been initialized
      */
     public void initialize() {
-        this.compositionPaneManager = new CompositionPaneManager(this.fxCompositionSheet, new TempoLine(fxTempoLine));
+        this.compositionManager = new CompositionManager(this.fxCompositionSheet, new TempoLine(fxTempoLine));
         handleInstrumentChange();
     }
 
@@ -44,7 +44,7 @@ public class Controller {
      * Sets all of the notes to be selected and adds them to the selected list.
      */
     public void handleSelectAll() {
-        this.compositionPaneManager.selectAllNotes();
+        this.compositionManager.selectAllNotes();
     }
 
     /**
@@ -52,7 +52,7 @@ public class Controller {
      */
     @FXML
     public void handleDelete() {
-        this.compositionPaneManager.deleteNotes();
+        this.compositionManager.deleteNotes();
     }
 
     /**
@@ -61,7 +61,7 @@ public class Controller {
     @FXML
     public void handleInstrumentChange() {
         RadioButton instrument = (RadioButton) instrumentGroup.getSelectedToggle();
-        this.compositionPaneManager.changeInstrument(instrument.getTextFill());
+        this.compositionManager.changeInstrument(instrument.getTextFill());
     }
 
     /**
@@ -76,7 +76,7 @@ public class Controller {
         }
         this.handleStopMusic();
         if (!mouseEvent.isControlDown()) {
-            compositionPaneManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
+            compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
         }
     }
 
@@ -92,7 +92,7 @@ public class Controller {
         }
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
-        compositionPaneManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY());
+        compositionManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY());
     }
 
     /**
@@ -102,7 +102,7 @@ public class Controller {
      */
     @FXML
     public void handleMouseDrag(MouseEvent mouseEvent) {
-        compositionPaneManager.handleDragMoved(mouseEvent.getX() - lastDragLocation.x,
+        compositionManager.handleDragMoved(mouseEvent.getX() - lastDragLocation.x,
                 mouseEvent.getY() - lastDragLocation.y);
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
@@ -116,12 +116,12 @@ public class Controller {
      */
     @FXML
     public void handleMouseReleased(MouseEvent mouseEvent) {
-        compositionPaneManager.handleDragEnded();
+        compositionManager.handleDragEnded();
         if (!isDragging) {
             if (mouseEvent.isControlDown()) {
-                compositionPaneManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());
+                compositionManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());
             } else {
-                compositionPaneManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
+                compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
             }
         }
         isDragging = false;
@@ -132,7 +132,7 @@ public class Controller {
      */
     @FXML
     protected void handleStopMusic() {
-        this.compositionPaneManager.stop();
+        this.compositionManager.stop();
     }
 
 
@@ -151,7 +151,7 @@ public class Controller {
      */
     @FXML
     protected void handlePlayMidi() {
-        this.compositionPaneManager.play();
+        this.compositionManager.play();
     }
 
     /**
