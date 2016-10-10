@@ -108,24 +108,24 @@ public class Controller {
         isDragging = false;
     }
 
-//    /**
-//     * Handles the different Mouse Click actions in the composition
-//     *
-//     * @param mouseEvent click on the composition
-//     */
-//    @FXML
-//    protected void handleCompositionClick(MouseEvent mouseEvent) {
-//        if (!mouseEvent.isStillSincePress()) {
-//            return;
-//        }
-//        this.handleStopMusic();
-//        if (!mouseEvent.isControlDown()) {
-//            compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
-//        }
-//        else{
-//            //compositionManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());
-//        }
-//    }
+    /**
+     * Handles the different Mouse Click actions in the composition
+     *
+     * @param mouseEvent click on the composition
+     */
+    @FXML
+    protected void handleCompositionClick(MouseEvent mouseEvent) {
+        if (!mouseEvent.isStillSincePress()) {
+            return;
+        }
+        this.handleStopMusic();
+        if (!mouseEvent.isControlDown()) {
+            compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
+        }
+        else{
+            //compositionManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());
+        }
+    }
 
     /**
      * Plays the sounds displayed in the composition.

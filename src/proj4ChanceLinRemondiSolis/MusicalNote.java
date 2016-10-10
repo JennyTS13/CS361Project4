@@ -62,10 +62,10 @@ public class MusicalNote {
      */
     public boolean getIsInBounds(double x, double y) {
         Bounds bounds = getBounds();
-        return (x < bounds.getMaxX() &&
-                y < bounds.getMaxY() &&
-                x > bounds.getMinX() &&
-                y > bounds.getMinY());
+        return (x <= bounds.getMaxX() &&
+                y <= bounds.getMaxY() &&
+                x >= bounds.getMinX() &&
+                y >= bounds.getMinY());
     }
 
     /**
