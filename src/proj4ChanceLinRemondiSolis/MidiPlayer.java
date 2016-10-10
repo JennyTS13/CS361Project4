@@ -115,7 +115,6 @@ public class MidiPlayer {
 
 
     /**
-     *
      * Indicates whether the music is being played
      *
      * @return if is playing or not
