@@ -31,6 +31,7 @@ import java.util.Optional;
  * @author Mike Remondi
  */
 public class CompositionManager {
+
     private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
     private TempoLine tempoLine;
 
@@ -40,7 +41,7 @@ public class CompositionManager {
     private Paint instrumentColor;
     private Hashtable<Paint, Integer> channelMapping;
     private boolean isMovingNotes;
-    private ResizeDirection resizeDirection = ResizeDirection.NONE;
+    private boolean isResizing;
     private Rectangle dragBox;
 
     /**
@@ -151,16 +152,6 @@ public class CompositionManager {
         }
         this.selectedNotes.clear();
     }
-
-    /**
-     * Checks to see if we are resizing our notes.
-     *
-     * @return a boolean indication of whether we are resizing notes.
-     */
-    public boolean isResizingNotes() {
-        return resizeDirection != ResizeDirection.NONE;
-    }
-
 
     /**
      * Deletes all the selected notes from the composition pane
@@ -306,7 +297,7 @@ public class CompositionManager {
     public void handleDragMoved(double dx, double dy, boolean controlDrag) {
         if (isMovingNotes) {
             moveSelectedNotes(dx, dy);
-        } else if (isResizingNotes()) {
+        } else if (isResizing) {
             resizeSelectedNotes(dx);
         } else {
             if (!controlDrag){
@@ -336,7 +327,7 @@ public class CompositionManager {
      */
     public void handleDragEnded() {
         releaseMovedNotes();
-        resizeDirection = ResizeDirection.NONE;
+        isResizing = false;
         isMovingNotes = false;
         composition.getChildren().remove(this.dragBox);
     }
@@ -400,8 +391,9 @@ public class CompositionManager {
      * @param x
      * @param y
      */
-    public void handleDragStartedAtLocation(double x, double y) {
-        resizeDirection = ResizeDirection.NONE;
+    public void handleDragStartedAtLocation(double x, double y, boolean controlDrag) {
+        if (controlDrag) { return; }
+        isResizing = false;
         isMovingNotes = false;
         Optional<MusicalNote> optionalNote = getNoteAtMouseClick(x, y);
         // if the click is on a note
@@ -409,12 +401,17 @@ public class CompositionManager {
             MusicalNote note = optionalNote.get();
             boolean onNoteEdge = false;
             // if it is on the edge of a note
-            if (note.getIsOnEdge(x, y) && note.isSelected()) {
+            if (note.getIsOnEdge(x, y)) {
                 onNoteEdge = true;
-                resizeDirection = ResizeDirection.RIGHT;
+                isResizing = true;
             }
-            // if it is not on a note's edge, we are moving notes
-            if (!onNoteEdge &&  note.isSelected()) {
+
+            if (!note.isSelected()) {
+                clearSelectedNotes();
+                selectNote(note);
+            }
+
+            if (!onNoteEdge) {
                 isMovingNotes = true;
             }
         }
@@ -454,13 +451,7 @@ public class CompositionManager {
      */
     public void resizeSelectedNotes(double dx) {
         for (MusicalNote note : selectedNotes) {
-            switch (resizeDirection) {
-                case RIGHT:
-                    note.resizeRight(dx);
-                    break;
-                default:
-                    break;
-            }
+            note.resizeRight(dx);
         }
     }
 

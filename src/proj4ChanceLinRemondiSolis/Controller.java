@@ -73,7 +73,7 @@ public class Controller {
     public void handleMousePressed(MouseEvent mouseEvent) {
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
-        compositionManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY());
+        compositionManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY(), mouseEvent.isControlDown());
     }
 
     /**
