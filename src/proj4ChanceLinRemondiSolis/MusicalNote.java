@@ -4,8 +4,6 @@
  * Class: CS361
  * Project: 4
  * Due Date: October 11, 2016
- * Takes in a Pane which it then adds lines to in order
- * to create a music composition sheet
  */
 
 package proj4ChanceLinRemondiSolis;
@@ -24,12 +22,12 @@ import javafx.scene.shape.Rectangle;
  */
 public class MusicalNote {
 
-    public static final int MINIMUM_WIDTH = 5;
+    private static final int MINIMUM_WIDTH = 5;
     private static final int VOLUME = 100;
 
     private Rectangle noteBox;
     private int channel;
-    private int trackIndex = 0;
+    private int trackIndex;
     private boolean selected;
 
     /**
@@ -41,6 +39,7 @@ public class MusicalNote {
     public MusicalNote(Rectangle newNoteBox, int channel) {
         this.noteBox = newNoteBox;
         this.channel = channel;
+        this.trackIndex = 0;
         this.setSelected(true);
     }
 
@@ -175,7 +174,7 @@ public class MusicalNote {
             setPosition(noteBox.getX(), noteBox.getY() - (noteBox.getY() % 10));
         }
         else{
-            setPosition(noteBox.getX(), noteBox.getY() + (noteBox.getY() % 10));
+            setPosition(noteBox.getX(), noteBox.getY() + (10 - (noteBox.getY() % 10)));
         }
     }
 

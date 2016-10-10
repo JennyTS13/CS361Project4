@@ -1,11 +1,9 @@
 /*
- * File: CompositionSheet.java
+ * File: TempoLine.java
  * Names: Graham Chance, Jenny Lin, Ana Sofia Solis Canales, Mike Remondi
  * Class: CS361
  * Project: 4
  * Due Date: October 11, 2016
- * Takes in a Pane which it then adds lines to in order
- * to create a music composition sheet
  */
 
 package proj4ChanceLinRemondiSolis;

@@ -17,8 +17,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * Creates a JavaFX window for the user to compose a musical piece to play
- * Controller for events in application
+ * Launches JavaFX application
  *
  * @author Graham Chance
  * @author Jenny Lin

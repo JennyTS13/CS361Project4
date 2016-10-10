@@ -1,3 +1,11 @@
+/*
+ * File: Controller.java
+ * Names: Graham Chance, Jenny Lin, Ana Sofia Solis Canales, Mike Remondi
+ * Class: CS361
+ * Project: 4
+ * Due Date: October 11, 2016
+ */
+
 package proj4ChanceLinRemondiSolis;
 
 import javafx.event.ActionEvent;
@@ -9,8 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
 /**
- * Handles all user GUI interactions and passes the necessary information
- * to the CompositionPaneManager.
+ * This class handles all user GUI interactions
  */
 public class Controller {
     private MidiPlayer midiPlayer = new MidiPlayer(100, 60);
