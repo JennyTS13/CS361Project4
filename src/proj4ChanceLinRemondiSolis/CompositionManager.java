@@ -303,16 +303,18 @@ public class CompositionManager {
      * @param dx
      * @param dy
      */
-    public void handleDragMoved(double dx, double dy) {
+    public void handleDragMoved(double dx, double dy, boolean controlDrag) {
         if (isMovingNotes) {
             moveSelectedNotes(dx, dy);
         } else if (isResizingNotes()) {
             resizeSelectedNotes(dx);
         } else {
+            if (!controlDrag){
+                clearSelectedNotes();
+            }
             this.dragBox.setWidth(this.dragBox.getWidth() + dx);
             this.dragBox.setHeight(this.dragBox.getHeight() + dy);
             Bounds bounds = this.dragBox.getBoundsInParent();
-            //clearSelectedNotes();
             for (MusicalNote note : notes) {
                 if (note.getIsInRectangleBounds(bounds.getMinX(), bounds.getMinY(),
                         bounds.getMaxX(), bounds.getMaxY())) {
@@ -373,20 +375,16 @@ public class CompositionManager {
         // if there is a note at the click location
         if (noteAtClickLocation.isPresent()) {
             // if this note is already selected, unselect it
-            System.out.println("HERE1");
             if (noteAtClickLocation.get().isSelected()){
-                System.out.println("HERE2");
                 unselectNote(noteAtClickLocation.get());
             }
             // if it is not selected, select it
             else {
-                System.out.println("HERE3");
                 selectNote(noteAtClickLocation.get());
             }
         }
         // add a new note and select it
         else{
-            System.out.println("HERE4");
             MusicalNote note = addNoteToComposition(x, y);
             selectNote(note);
         }
@@ -405,32 +403,23 @@ public class CompositionManager {
     public void handleDragStartedAtLocation(double x, double y) {
         resizeDirection = ResizeDirection.NONE;
         isMovingNotes = false;
-        final boolean onNote = getNoteExistsAtCoordinates(x, y);
-
+        Optional<MusicalNote> optionalNote = getNoteAtMouseClick(x, y);
         // if the click is on a note
-        if (onNote) {
+        if (optionalNote.isPresent()) {
+            MusicalNote note = optionalNote.get();
             boolean onNoteEdge = false;
-            for (MusicalNote note : notes) {
-                // if it is in the bounds of a note and the note is not selected
-                if (note.getIsInBounds(x, y) && !note.isSelected()) {
-                    //clearSelectedNotes();
-                    selectNote(note);
-                }
-                // if it is on the edge of a note
-                if (note.getIsOnEdge(x, y)) {
-                    onNoteEdge = true;
-                        resizeDirection = ResizeDirection.RIGHT;
-                    break;
-                }
+            // if it is on the edge of a note
+            if (note.getIsOnEdge(x, y) && note.isSelected()) {
+                onNoteEdge = true;
+                resizeDirection = ResizeDirection.RIGHT;
             }
             // if it is not on a note's edge, we are moving notes
-            if (!onNoteEdge) {
+            if (!onNoteEdge &&  note.isSelected()) {
                 isMovingNotes = true;
             }
         }
         // click is not on a note so create a DragBox
         else {
-            //clearSelectedNotes();
             createDragBox(x, y);
         }
     }

@@ -84,7 +84,7 @@ public class Controller {
     @FXML
     public void handleMouseDrag(MouseEvent mouseEvent) {
         compositionManager.handleDragMoved(mouseEvent.getX() - lastDragLocation.x,
-                mouseEvent.getY() - lastDragLocation.y);
+                mouseEvent.getY() - lastDragLocation.y, mouseEvent.isControlDown());
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
         this.isDragging = true;
@@ -106,25 +106,6 @@ public class Controller {
             }
         }
         isDragging = false;
-    }
-
-    /**
-     * Handles the different Mouse Click actions in the composition
-     *
-     * @param mouseEvent click on the composition
-     */
-    @FXML
-    protected void handleCompositionClick(MouseEvent mouseEvent) {
-        if (!mouseEvent.isStillSincePress()) {
-            return;
-        }
-        this.handleStopMusic();
-        if (!mouseEvent.isControlDown()) {
-            //compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
-        }
-        else{
-            //compositionManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());
-        }
     }
 
     /**

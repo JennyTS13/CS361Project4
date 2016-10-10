@@ -41,7 +41,6 @@
     <center>
         <ScrollPane BorderPane.alignment="CENTER">
             <Pane fx:id="fxCompositionSheet"
-                  onMouseClicked="#handleCompositionClick"
                   onMousePressed="#handleMousePressed"
                   onMouseDragged="#handleMouseDrag"
                   onMouseReleased="#handleMouseReleased">
