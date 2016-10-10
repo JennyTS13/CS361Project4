@@ -115,7 +115,6 @@ public class MidiPlayer {
 
 
     /**
-     * New method
      *
      * Indicates whether the music is being played
      *
