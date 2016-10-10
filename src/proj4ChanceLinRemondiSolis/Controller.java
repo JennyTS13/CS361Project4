@@ -22,11 +22,12 @@ import javafx.scene.shape.Line;
 public class Controller {
 
 
-    /******************************************************************************************************
-     *                                                                                                    *
-     *                                  Fields & Initializer                                              *
-     *                                                                                                    *
-     ******************************************************************************************************/
+    /**************************************************************************
+     *                                                                        *
+     *                              Fields                                    *
+     *                            Initializer                                 *
+     *                                                                        *
+     **************************************************************************/
 
     /**
      * Holds the fxml injected composition pane
@@ -72,11 +73,11 @@ public class Controller {
     }
 
 
-    /******************************************************************************************************
-     *                                                                                                    *
-     *                         Methods for note movement and manipulation                                 *
-     *                                                                                                    *
-     ******************************************************************************************************/
+    /**************************************************************************
+     *                                                                        *
+     *             Methods for note movement and manipulation                 *
+     *                                                                        *
+     **************************************************************************/
 
     /**
      * Sets all of the notes to be selected and adds them to the selected list.
@@ -111,7 +112,9 @@ public class Controller {
     public void handleMousePressed(MouseEvent mouseEvent) {
         lastDragLocation.x = mouseEvent.getX();
         lastDragLocation.y = mouseEvent.getY();
-        compositionManager.handleDragStartedAtLocation(mouseEvent.getX(), mouseEvent.getY(), mouseEvent.isControlDown());
+        compositionManager.handleDragStartedAtLocation(mouseEvent.getX(),
+                                                       mouseEvent.getY(),
+                                                       mouseEvent.isControlDown());
     }
 
     /**
@@ -153,11 +156,11 @@ public class Controller {
         double x, y;
     }
 
-    /******************************************************************************************************
-     *                                                                                                    *
-     *                          Music reproduction handling methods                                       *
-     *                                                                                                    *
-     ******************************************************************************************************/
+    /**************************************************************************
+     *                                                                        *
+     *             Music reproduction handling methods                        *
+     *                                                                        *
+     **************************************************************************/
 
 
     /**
