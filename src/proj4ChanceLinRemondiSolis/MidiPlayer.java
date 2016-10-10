@@ -1,6 +1,6 @@
 /*
  * File: MidiPlayer.java
- * Names: Graham Chance, Jenny Lin, Ana Sofia Solis Canales, Mike Remondi
+ * Names: Graham Chance, Jenny Lin, Ana Sofia Solis Canales, Mike Remondi, Dale Skrien
  * Class: CS361 
  * Project: 4
  * Date: October 11, 2016
