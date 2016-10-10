@@ -120,7 +120,7 @@ public class Controller {
         }
         this.handleStopMusic();
         if (!mouseEvent.isControlDown()) {
-            compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
+            //compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
         }
         else{
             //compositionManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());

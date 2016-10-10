@@ -112,6 +112,8 @@ public class CompositionManager {
      *
      * @param xPos the input x position of the note
      * @param yPos the input y position of the note
+     *
+     * @return the note added
      */
     public MusicalNote addNoteToComposition(double xPos, double yPos) {
         if (yPos >= 0 && yPos < 1280) {
@@ -288,9 +290,7 @@ public class CompositionManager {
      */
     public void unselectNote(MusicalNote note){
         note.setSelected(false);
-        if (selectedNotes.contains(note)) {
-            selectedNotes.remove(note);
-        }
+        selectedNotes.remove(note);
     }
 
     /**
@@ -312,7 +312,7 @@ public class CompositionManager {
             this.dragBox.setWidth(this.dragBox.getWidth() + dx);
             this.dragBox.setHeight(this.dragBox.getHeight() + dy);
             Bounds bounds = this.dragBox.getBoundsInParent();
-            clearSelectedNotes();
+            //clearSelectedNotes();
             for (MusicalNote note : notes) {
                 if (note.getIsInRectangleBounds(bounds.getMinX(), bounds.getMinY(),
                         bounds.getMaxX(), bounds.getMaxY())) {
@@ -349,16 +349,12 @@ public class CompositionManager {
      */
     public void handleClickAt(double x, double y) {
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
+        clearSelectedNotes();
         if (noteAtClickLocation.isPresent()) {
-            if (noteAtClickLocation.get().isSelected()){
-                return;
-            }
-            else {
-                clearSelectedNotes();
+            if (!noteAtClickLocation.get().isSelected()){
                 selectNote(noteAtClickLocation.get());
             }
         } else {
-            clearSelectedNotes();
             addNoteToComposition(x, y);
         }
     }
@@ -377,16 +373,20 @@ public class CompositionManager {
         // if there is a note at the click location
         if (noteAtClickLocation.isPresent()) {
             // if this note is already selected, unselect it
+            System.out.println("HERE1");
             if (noteAtClickLocation.get().isSelected()){
+                System.out.println("HERE2");
                 unselectNote(noteAtClickLocation.get());
             }
             // if it is not selected, select it
             else {
+                System.out.println("HERE3");
                 selectNote(noteAtClickLocation.get());
             }
         }
         // add a new note and select it
         else{
+            System.out.println("HERE4");
             MusicalNote note = addNoteToComposition(x, y);
             selectNote(note);
         }
@@ -413,7 +413,7 @@ public class CompositionManager {
             for (MusicalNote note : notes) {
                 // if it is in the bounds of a note and the note is not selected
                 if (note.getIsInBounds(x, y) && !note.isSelected()) {
-                    clearSelectedNotes();
+                    //clearSelectedNotes();
                     selectNote(note);
                 }
                 // if it is on the edge of a note
@@ -430,7 +430,7 @@ public class CompositionManager {
         }
         // click is not on a note so create a DragBox
         else {
-            clearSelectedNotes();
+            //clearSelectedNotes();
             createDragBox(x, y);
         }
     }
