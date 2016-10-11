@@ -340,15 +340,15 @@ public class CompositionManager {
      * and unselects the corresponding notes.
      * @param dx position of click in x axis
      * @param dy position of click in y axis
-     * @param controlDrag if control-down
+     * @param controlDown if control-down
      */
-    public void handleDragMoved(double dx, double dy, boolean controlDrag) {
+    public void handleDragMoved(double dx, double dy, boolean controlDown) {
         if (isMovingNotes) {
             moveSelectedNotes(dx, dy);
         } else if (isResizing) {
             resizeSelectedNotes(dx);
         } else {
-            if (!controlDrag) {
+            if (!controlDown) {
                 clearSelectedNotes();
             }
             this.dragBox.setWidth(this.dragBox.getWidth() + dx);
@@ -445,10 +445,10 @@ public class CompositionManager {
      *
      * @param x position at x axis
      * @param y position at y axis
-     * @param controlDrag if control-down is pressed
+     * @param controlDown if control-down is pressed
      */
-    public void handleDragStartedAtLocation(double x, double y, boolean controlDrag) {
-        if (controlDrag) {
+    public void handleDragStartedAtLocation(double x, double y, boolean controlDown) {
+        if (controlDown) {
             return;
         }
         isResizing = false;
