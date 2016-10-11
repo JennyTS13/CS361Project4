@@ -155,15 +155,6 @@ public class CompositionManager {
     }
 
     /**
-     * Adds a note to the list of selected notes.
-     *
-     * @param note A MusicalNote to be added to the list.
-     */
-    public void addNoteToSelectedNotes(MusicalNote note) {
-        this.selectedNotes.add(note);
-    }
-
-    /**
      * Clears the list of selected notes
      */
     public void clearSelectedNotes() {
@@ -276,7 +267,7 @@ public class CompositionManager {
         ArrayList<MusicalNote> notes = this.getNotes();
         for (MusicalNote note : notes) {
             note.setSelected(true);
-            this.addNoteToSelectedNotes(note);
+            this.selectedNotes.add(note);
         }
     }
 
