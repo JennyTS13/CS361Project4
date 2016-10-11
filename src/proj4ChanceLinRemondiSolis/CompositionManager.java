@@ -197,7 +197,7 @@ public class CompositionManager {
      * @param yPos y position of note in composition
      * @return true or false in composition
      */
-    private boolean getNoteExistsAtCoordinates(double xPos, double yPos) {
+    public boolean getNoteExistsAtCoordinates(double xPos, double yPos) {
         if (!this.notes.isEmpty()) {
             for (MusicalNote note : this.notes) {
                 if (note.getIsInBounds(xPos, yPos)) {
@@ -506,7 +506,7 @@ public class CompositionManager {
      *
      * @param midiPlayer MIDI sounds player
      */
-    private void addProgramChanges(MidiPlayer midiPlayer) {
+    public void addProgramChanges(MidiPlayer midiPlayer) {
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE, 0, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 1, 6, 0, 0, 0);
         midiPlayer.addMidiEvent(ShortMessage.PROGRAM_CHANGE + 2, 12, 0, 0, 0);
@@ -597,7 +597,7 @@ public class CompositionManager {
     /**
      * starts the reproduction  of the composition
      */
-    private void playMusicAndAnimation() {
+    public void playMusicAndAnimation() {
         this.tempoLine.playAnimation();
         this.midiPlayer.play();
     }
