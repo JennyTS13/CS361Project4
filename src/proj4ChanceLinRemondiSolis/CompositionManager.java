@@ -84,9 +84,16 @@ public class CompositionManager {
     private boolean isResizing;
 
     /**
+     * Indicates if a note has been selected to prevent duplicate selection
+     */
+    private boolean toggleNoteSelection;
+
+    /**
      * Holds the Rectangle fro the dragging box that selects
      */
     private Rectangle dragBox;
+
+
 
 
     /**************************************************************************
@@ -408,9 +415,10 @@ public class CompositionManager {
     public void handleControlClickAt(double x, double y) {
         Optional<MusicalNote> noteAtClickLocation = getNoteAtMouseClick(x, y);
         // if there is a note at the click location
+//        if (noteAtClickLocation.isPresent() && !isMovingNotes && !isResizing) {
         if (noteAtClickLocation.isPresent()) {
             // if this note is already selected, unselect it
-            if (noteAtClickLocation.get().isSelected()) {
+            if (noteAtClickLocation.get().isSelected() && !toggleNoteSelection) {
                 unselectNote(noteAtClickLocation.get());
             }
             // if it is not selected, select it
@@ -439,11 +447,9 @@ public class CompositionManager {
      * @param controlDown if control-down is pressed
      */
     public void handleDragStartedAtLocation(double x, double y, boolean controlDown) {
-        if (controlDown) {
-            return;
-        }
         isResizing = false;
         isMovingNotes = false;
+        toggleNoteSelection = false;
         Optional<MusicalNote> optionalNote = getNoteAtMouseClick(x, y);
         // if the click is on a note
         if (optionalNote.isPresent()) {
@@ -455,14 +461,19 @@ public class CompositionManager {
                 isResizing = true;
             }
 
-            if (!note.isSelected()) {
-                clearSelectedNotes();
-                selectNote(note);
-            }
-
             if (!onNoteEdge) {
                 isMovingNotes = true;
             }
+
+            if (!note.isSelected()) {
+                if(!controlDown) {
+                    clearSelectedNotes();
+                }
+                selectNote(note);
+                toggleNoteSelection = true;
+            }
+
+
         }
         // click is not on a note so create a DragBox
         else {

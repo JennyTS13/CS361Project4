@@ -138,7 +138,6 @@ public class Controller {
      */
     @FXML
     public void handleMouseReleased(MouseEvent mouseEvent) {
-        compositionManager.handleDragEnded();
         if (!isDragging) {
             if (mouseEvent.isControlDown()) {
                 compositionManager.handleControlClickAt(mouseEvent.getX(), mouseEvent.getY());
@@ -146,6 +145,7 @@ public class Controller {
                 compositionManager.handleClickAt(mouseEvent.getX(), mouseEvent.getY());
             }
         }
+        compositionManager.handleDragEnded();
         isDragging = false;
     }
 
